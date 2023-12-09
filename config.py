@@ -18,3 +18,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+
+
+DB_PASSWORD = ""
+DB_NAME = "evm"
