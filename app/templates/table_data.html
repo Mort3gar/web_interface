@@ -1,6 +1,50 @@
     {% extends 'base.html' %}
 
     {% block scripts %}
+    <script type="text/javascript">
+      const get = async (url) => {
+        const response = await axios.get(
+                url
+            );
+            return await response.data
+    };
+
+    const post = async (url, dict_) => {
+        const response = await axios.post(
+            url, dict_
+        );
+        return await response.data
+    }
+    const patch = async (url, dict_) => {
+      const response = await axios.patch(
+        url, dict_
+      );
+      return await response.data
+    }
+
+    async function test(){
+      await get("/api/get_brands?id=1").then(res => {
+        console.log(res)
+      }).catch(error =>{
+        console.log("Error")
+        console.log(error)
+      })
+
+      // await post("/api/add_brand", {"brand_name": "HP"}).then(res =>{
+      //   console.log(res)
+      // }).catch(error => {
+      //   console.log(error)
+      // })
+      await patch("/api/edit_brand", {id: 12, brand_name: "HP1"}).then(res =>{
+        console.log(res)
+      }).catch(error =>{
+        console.log(error)
+      })
+    }
+
+    window.onload = test()
+
+    </script>
     {% endblock %}
 
     {% block content %}
