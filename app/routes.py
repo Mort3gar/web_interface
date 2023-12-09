@@ -18,12 +18,32 @@ def page_not_found(e):
 
 
 @app.route("/", methods=["GET"])
+@app.route("/table_data", methods=["GET"])
+def table_data():
+    return render_template("table_data.html")
+
+
+@app.route("/table_execute_orders", methods=["GET"])
+def table_execute_orders():
+    return render_template("table_execute_orders.html")
+
+
 @app.route("/table_staff", methods=["GET"])
 def main_page():
     print(dbHandler.test())
     return render_template("table_staff.html")
 
 
-@app.route("/add_staff", methods=["GET"])
+@app.route("/order_form", methods=["GET"])
+def order_form():
+    return render_template("order_form.html")
+
+
+@app.route("/execute_order_form", methods=["GET"])
+def execute_order_form():
+    return render_template("execute_order_form.html")
+
+
+@app.route("/add_staff_form", methods=["GET"])
 def add_staff():
     return render_template("add_staff_form.html")
