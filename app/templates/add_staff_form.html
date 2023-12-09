@@ -1,0 +1,60 @@
+    {% extends 'base.html' %}
+
+    {% block scripts %}
+    <script>
+        function shower(divId) { 
+            $("#" + divId).show();
+            console.log("Я появился")
+        }
+        
+        function hider(divId){
+            $("#" + divId).hide();
+            console.log("Я скрылся") 
+        }
+          
+        function GFG_Fun(value) {
+            if (value !== "choice_not_in_list") {
+                hider('hide_div')
+            }
+            else{
+                shower('hide_div')
+            }
+        } 
+    </script>
+    {% endblock %}
+
+
+    {% block content %}
+    <div class="container pt-3">
+        <div class="container mt-5">
+            <div class="border border-dark rounded p-3 m-5">
+                <form id="form_add_staff">
+                    <legend class="mb-3">Добавить сотрудника</legend>
+                    <div class="mb-3">
+                        <label for="staff_name" class="form-label">ФИО сотрудника</label>
+                        <input type="text" id="staff_name" class="form-control" placeholder="Введите ФИО:" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="choice_post" class="form-label">Должность</label>
+                        <select name="choice_select_post" id="choice_post" onclick="GFG_Fun(this.value)">
+                            <option value="choice_maintenance_technician">Техник-ремонтник</option>
+                            <option value="choice_master_receptionist">Мастер-приемщик</option>
+                            <option value="choice_sales_consultant">Продавец-консультант</option>
+                            <option value="choice_service_engineer">Сервисный-инженер</option>
+                            <option value="choice_equipment_engineer">Инженер по эксплуатации оборудования</option>
+                            <option value="choice_not_in_list">Отсутствует в списке</option>
+                        </select>
+                    </div>
+                    <div id="hide_div" class="mb-3">
+                        <input type="text" id="post_name" class="form-control" placeholder="Введите название должности:">
+                    </div>
+
+                    <div>
+                        <input type="submit" value="Сохранить" class="btn btn-dark">
+                    </div>
+                </form>            
+            </div>
+        </div>
+    </div>
+    {% endblock %}
