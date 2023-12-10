@@ -23,23 +23,28 @@
     }
 
     async function test(){
-      await get("/api/get_brands?id=1").then(res => {
+      await get("/api/get_client?id=1").then(res =>{
         console.log(res)
       }).catch(error =>{
-        console.log("Error")
         console.log(error)
       })
+      // await get("/api/get_brands?id=1").then(res => {
+      //   console.log(res)
+      // }).catch(error =>{
+      //   console.log("Error")
+      //   console.log(error)
+      // })
 
-      // await post("/api/add_brand", {"brand_name": "HP"}).then(res =>{
+      // await post("/api/add_brand", {"brand_name": "TEFAL"}).then(res =>{
       //   console.log(res)
       // }).catch(error => {
       //   console.log(error)
       // })
-      await patch("/api/edit_brand", {id: 12, brand_name: "HP1"}).then(res =>{
-        console.log(res)
-      }).catch(error =>{
-        console.log(error)
-      })
+      // await patch("/api/edit_brand", {id: 12, brand_name: "HP1"}).then(res =>{
+      //   console.log(res)
+      // }).catch(error =>{
+      //   console.log(error)
+      // })
     }
 
     window.onload = test()

@@ -11,11 +11,14 @@ brands_api = Blueprint('brands_api', __name__, template_folder="templates", url_
 def get_brands():
     data = request.args
     if "id" in data:
-        res = dbHandler.execute(f"select * from brands where id = {data['id']}")[0]
-        return json.dumps({
-            "id": res[0],
-            "name": res[1]
-        }), 200, {'Content-Type': 'application/json'}
+        if int(data['id']) in unzipOneItem(dbHandler.execute(f"select id from brands")):
+            res = dbHandler.execute(f"select * from brands where id = {data['id']}")[0]
+            return json.dumps({
+                "id": res[0],
+                "name": res[1]
+            }), 200, {'Content-Type': 'application/json'}
+        else:
+            return abort(409, BrandsAPIErrors.idErr)
     else:
         res = []
         for item in dbHandler.execute("select * from brands"):
@@ -59,3 +62,5 @@ def edit_brand():
         except ValueError as e:
             print(e)
             return abort(409, BrandsAPIErrors.colValLenErr)
+    else:
+        return abort(409, BrandsAPIErrors.errorOccurred)
