@@ -29,7 +29,7 @@ def get_execution():
             return abort(409, ExecutionOfOrdersAPIErrors.idErr)
     else:
         res = []
-        for item in dbHandler.execute("select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id"):
+        for item in dbHandler.execute("select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id"):
             res.append({
                 "id": item[0],
                 "client_name": item[1],
