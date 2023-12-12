@@ -1,0 +1,85 @@
+    {% extends 'base.html' %}
+
+    {% block content %}
+    <div class="container pt-3">
+        <div class="container mt-5">
+            <div class="border border-dark rounded p-3 m-5">
+                <form id="form_add_staff">
+                    <legend class="mb-3">Добавить сотрудника</legend>
+                    <div class="mb-3">
+                        <label for="staff_name" class="form-label">ФИО сотрудника</label>
+                        <input type="text" id="staff_name" class="form-control" placeholder="Введите ФИО:" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="post_name" class="form-label">Должность</label>
+                        <input type="text" id="post_name" class="form-control" placeholder="Введите название должности:">
+                    </div>
+
+                    <div>
+                        <input type="submit" value="Сохранить" class="btn btn-dark">
+                    </div>
+                </form>            
+            </div>
+        </div>
+    </div>
+    {% block scripts_down %}
+        <script type="text/javascript">
+
+            // const get = async (url) => {
+            //     const response = await axios.get(
+            //         url
+            //     );
+            //     return await response.data
+            // };
+
+            // async function get_staff(){
+            //     await get("/api/get_staff").then(res =>{
+            //     console.log(res)
+            //     return res
+            //   }).catch(error =>{
+            //   console.log(error)
+            //     return null
+            //   })
+            // }
+
+            // // Формат получаемых данных [id, name, posts]
+            // async function addDataInTable(f_data, table_id){
+            //     await get("/api/get_staff").then(res =>{
+            //     data = res
+            //     let table = document.getElementById(table_id);
+
+            //     for (let one_data in data) {
+            //         //console.log(data)
+            //         let counter = 0;
+            //         let new_row = table.insertRow(table.rows.length);
+            //         for (let key in data[one_data]) {
+            //             //console.log(key)
+            //             // Вставляем данные в ячейки новой строки
+            //             new_row.insertCell(counter).innerHTML = data[one_data][key];
+            //             counter++;
+            //         }
+
+            //         // Вставляем данные в ячейки новой строки
+            //         new_row.insertCell(counter).innerHTML = `
+            //             <div class="btn-group">
+            //                 <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            //                     Действие
+            //                 </button>
+            //                 <ul class="dropdown-menu">
+            //                     <li><a class="dropdown-item" href="#">Изменить</a></li>
+            //                     <li><hr class="dropdown-divider"></li>
+            //                     <li><a class="dropdown-item" href="#">Удалить</a></li>
+            //                 </ul>
+            //             </div>
+            //         `
+            //     }
+            //   }).catch(error =>{
+            //   console.log(error)
+            //     return null
+            //   })
+            // }
+            // window.onload = addDataInTable(get_staff, "table_orders");
+        </script>
+    {% endblock %}
+    {% endblock %}

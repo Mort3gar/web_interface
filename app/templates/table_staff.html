@@ -20,23 +20,7 @@
 
     {% block scripts_down %}
         <script type="text/javascript">
-            // let staff_dir = [
-            //     {
-            //         "id": 1,
-            //         "name": "Татарин Георгиевич",
-            //         "posts": "Паша-техник"
-            //     },
-            //     {
-            //         "id": 2,
-            //         "name": "Татарин Салаватович",
-            //         "posts": "Менестрель-хохохо"
-            //     },
-            //     {
-            //         "id": 3,
-            //         "name": "Татарин Можно-не-надо",
-            //         "posts": "Сделай-сам"
-            //     }
-            // ];
+
             const get = async (url) => {
                 const response = await axios.get(
                     url
@@ -44,20 +28,10 @@
                 return await response.data
             };
 
-            async function get_staff(){
-                await get("/api/get_staff").then(res =>{
-                console.log(res)
-                return res
-              }).catch(error =>{
-              console.log(error)
-                return null
-              })
-            }
-
             // Формат получаемых данных [id, name, posts]
-            async function addDataInTable(f_data, table_id){
+            async function addDataInTable(table_id){
                 await get("/api/get_staff").then(res =>{
-                data = res
+                let data = res
                 let table = document.getElementById(table_id);
 
                 for (let one_data in data) {
@@ -90,7 +64,7 @@
                 return null
               })
             }
-            window.onload = addDataInTable(get_staff, "table_orders");
+            window.onload = addDataInTable("table_orders");
         </script>
     {% endblock %}
 
