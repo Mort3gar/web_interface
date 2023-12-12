@@ -21,72 +21,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                <th scope="row">id - 1</th>
-                <td>Мистер-Бистер</td>
-                <td>Замена подшипников</td>
-                <td>2323</td>
-                <td>20.20.2020</td>
-                <td>да</td>
-                <td>20.28.2020</td>
-                <td>2323</td>
-                <td>
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Действие
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Изменить</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Удалить</a></li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                <th scope="row">id - 2</th>
-                <td>Мистер-Бистер</td>
-                <td>Замена разетки</td>
-                <td>2323</td>
-                <td>20.20.2020</td>
-                <td>да</td>
-                <td>20.28.2020</td>
-                <td>0</td>
-                <td>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Действие
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Изменить</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Удалить</a></li>
-                        </ul>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                <th scope="row">id - 3</th>
-                <td>Мистер-Бистер</td>
-                <td>Пайка платы</td>
-                <td>2323</td>
-                <td>20.20.2020</td>
-                <td>да</td>
-                <td>20.28.2020</td>
-                <td>2323</td>
-                <td>
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Действие
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Изменить</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Удалить</a></li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
+
+                <!-- Сюда будут вставляться строки с ячейками -->
+
             </tbody>
         </table>
     </div>
@@ -114,10 +51,8 @@
                     let counter = 0;
                     let new_row = table.insertRow(table.rows.length);
                     for (let key in list_tag) {
-
-
                         // Вставляем данные в ячейки новой строки
-                        new_row.insertCell(counter).innerHTML = data[one_data][key];
+                        new_row.insertCell(counter).innerHTML = data[one_data][list_tag[key]];
                         counter++;
                     }
 
