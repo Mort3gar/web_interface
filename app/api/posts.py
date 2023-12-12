@@ -4,7 +4,7 @@ from flask import request, Blueprint, abort
 from app.functions import unzipOneItem
 from app.api.ErrorMessages import PostsAPIErrors
 
-posts_api = Blueprint('clients_api', __name__, template_folder="templates", url_prefix='/api')
+posts_api = Blueprint('posts_api', __name__, template_folder="templates", url_prefix='/api')
 
 
 @posts_api.route("/get_post", methods=["GET"])
