@@ -23,6 +23,23 @@ class ClientsAPIErrors(BaseAPIErrors):
 class PostsAPIErrors(BaseAPIErrors):
     idErr: str = BaseAPIErrors.idErr.format("Должности")
 
+
 @dataclass(frozen=True)
 class ProductAPIErrors(BaseAPIErrors):
     idErr: str = BaseAPIErrors.idErr.format("Товара")
+
+
+@dataclass(frozen=True)
+class StaffAPIErrors(BaseAPIErrors):
+    idErr: str = BaseAPIErrors.idErr.format("Сотрудника")
+
+
+@dataclass(frozen=True)
+class TypesOfRepairsAPIErrors(BaseAPIErrors):
+    idErr: str = BaseAPIErrors.idErr.format("Вида ремонта")
+    nameUsedErr: str = "Такой вид ремонта уже существует"
+
+
+@dataclass(frozen=True)
+class OrdersAPIErrors(BaseAPIErrors):
+    idErr: str = BaseAPIErrors.idErr.format("Заказа")
