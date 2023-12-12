@@ -2,7 +2,7 @@ import json
 from app.mysqlConnector import dbHandler
 from flask import request, Blueprint, abort
 from app.functions import unzipOneItem
-from app.api.ErrorMessages import OrdersAPIErrors
+from app.api.ErrorMessages import OrdersAPIErrors, ClientsAPIErrors, ProductAPIErrors
 from collections import Counter
 
 orders_api = Blueprint('staff_api', __name__, template_folder="templates", url_prefix='/api')
@@ -44,11 +44,16 @@ def get_order():
 def add_order():
     data = request.json
     if Counter(['clients_id', 'product_id', 'order_receipt_date']) == Counter(list(data.keys())):
+        if len(dbHandler.execute(f"select * from clients where id = {data['clients_id']}")) == 0:
+            return abort(409, ClientsAPIErrors.idErr)
+        if len(dbHandler.execute(f"select * from product where id = {data['product_id']}")) == 0:
+            return abort(409, ProductAPIErrors.idErr)
         try:
             dbHandler.add('orders', ['clients_id', 'product_id', 'guaranty', 'order_receipt_date'], [data['clients_id'], data['product_id'], 0, data['order_receipt_date']])
         except Exception as e:
             print(e)
             return abort(500, OrdersAPIErrors.errorOccurred)
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
     else:
         return abort(403, OrdersAPIErrors.errorOccurred)
 
@@ -57,6 +62,10 @@ def add_order():
 def edit_order():
     data = request.json
     if Counter(['id', 'clients_id', 'product_id', 'order_receipt_date']) == Counter(list(data.keys())):
+        if len(dbHandler.execute(f"select * from clients where id = {data['clients_id']}")) == 0:
+            return abort(409, ClientsAPIErrors.idErr)
+        if len(dbHandler.execute(f"select * from product where id = {data['product_id']}")) == 0:
+            return abort(409, ProductAPIErrors.idErr)
         try:
             if len(dbHandler.execute(f"select * from orders where id = {data['id']}")) != 0:
                 dbHandler.update("orders", ['clients_id', 'product_id', 'order_receipt_date'], [data['clients_id'], data['product_id'], data['order_receipt_date']], data['id'])

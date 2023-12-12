@@ -43,3 +43,7 @@ class TypesOfRepairsAPIErrors(BaseAPIErrors):
 @dataclass(frozen=True)
 class OrdersAPIErrors(BaseAPIErrors):
     idErr: str = BaseAPIErrors.idErr.format("Заказа")
+
+@dataclass(frozen=True)
+class ExecutionOfOrdersAPIErrors(BaseAPIErrors):
+    idErr: str = BaseAPIErrors.idErr.format("Исполнения")
