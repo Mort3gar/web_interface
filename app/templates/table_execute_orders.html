@@ -45,10 +45,11 @@
                 let table = document.getElementById(table_id);
                 console.log(data)
                 let list_tag = ["id", "client_name", "repair_type", "repair_cost", "order_execution_date", "message", "date_of_receipt"]
+                let counter;
 
                 for (let one_data in data) {
                     //console.log(data)
-                    let counter = 0;
+                    counter = 0;
                     let new_row = table.insertRow(table.rows.length);
                     for (let key in list_tag) {
                         // Вставляем данные в ячейки новой строки
@@ -67,7 +68,9 @@
                     else{
                       garanthy = 0
                     }
+
                     new_row.insertCell(counter).innerHTML = garanthy;
+                    counter++;
 
                     // Вставляем данные в ячейки новой строки
                     new_row.insertCell(counter).innerHTML = `
