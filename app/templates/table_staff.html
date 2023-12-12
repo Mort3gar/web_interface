@@ -1,22 +1,19 @@
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 
-    {% block scripts %}
-    {% endblock %}
-
-    {% block content %}
+{% block content %}
     <div class="container mt-5">
         <table class="table table-striped table-hover" id="table_orders">
             <caption>Таблица заказов</caption>
             <thead>
-              <tr>
+            <tr>
                 <th scope="col">#Номер сотрудника</th>
                 <th scope="col">ФИО сотрудника</th>
                 <th scope="col">Занимаемая должность</th>
                 <th scope="col">Действие</th>
-              </tr>
+            </tr>
             </thead>
             <tbody>
-              <tr>
+            <tr>
                 <th scope="row">id - 1</th>
                 <td>Маленький Татарин Георгиевич</td>
                 <td>Паша-Техник</td>
@@ -31,9 +28,9 @@
                             <li><a class="dropdown-item" href="#">Удалить</a></li>
                         </ul>
                     </div>
-                  </td>
-              </tr>
-              <tr>
+                </td>
+            </tr>
+            <tr>
                 <th scope="row">id - 2</th>
                 <td>Маленький Татарин Георгиевич</td>
                 <td>Паша-Техник</td>
@@ -48,9 +45,9 @@
                             <li><a class="dropdown-item" href="#">Удалить</a></li>
                         </ul>
                     </div>
-                  </td>
-              </tr>
-              <tr>
+                </td>
+            </tr>
+            <tr>
                 <th scope="row">id - 3</th>
                 <td>Маленький Татарин Георгиевич</td>
                 <td>Паша-Техник</td>
@@ -65,9 +62,66 @@
                             <li><a class="dropdown-item" href="#">Удалить</a></li>
                         </ul>
                     </div>
-                  </td>
-              </tr>
+                </td>
+            </tr>
             </tbody>
-          </table>
+        </table>
     </div>
+
+    {% block scripts_down %}
+        <script type="text/javascript">
+            let staff_dir = [
+                {
+                    "id": 1,
+                    "name": "Татарин Георгиевич",
+                    "posts": "Паша-техник"
+                },
+                {
+                    "id": 2,
+                    "name": "Татарин Салаватович",
+                    "posts": "Менестрель-хохохо"
+                },
+                {
+                    "id": 3,
+                    "name": "Татарин Можно-не-надо",
+                    "posts": "Сделай-сам"
+                }
+            ];
+
+            // Формат получаемых данных [id, name, posts]
+            function addDataInTable(data, table_id){
+                // Получаем таблицу, вставляем строку
+                let table = document.getElementById(table_id);
+
+                for (let one_data in data) {
+                    console.log(data)
+                    let counter = 0;
+                    let new_row = table.insertRow(table.rows.length);
+                    for (let key in data[one_data]) {
+                        console.log(key)
+                        // Вставляем данные в ячейки новой строки
+                        new_row.insertCell(counter).innerHTML = data[one_data][key];
+                        counter++;
+                    }
+
+                    // Вставляем данные в ячейки новой строки
+                    new_row.insertCell(counter).innerHTML = `
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Действие
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Изменить</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Удалить</a></li>
+                            </ul>
+                        </div>
+                    `
+                }
+            }
+
+            window.onload = addDataInTable(staff_dir, "table_orders");
+        </script>
     {% endblock %}
+
+{% endblock %}
