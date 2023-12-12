@@ -1,55 +1,6 @@
     {% extends 'base.html' %}
 
     {% block scripts %}
-    <script type="text/javascript">
-      const get = async (url) => {
-        const response = await axios.get(
-                url
-            );
-            return await response.data
-    };
-
-    const post = async (url, dict_) => {
-        const response = await axios.post(
-            url, dict_
-        );
-        return await response.data
-    }
-    const patch = async (url, dict_) => {
-      const response = await axios.patch(
-        url, dict_
-      );
-      return await response.data
-    }
-
-    async function test(){
-      await get("/api/get_client?id=1").then(res =>{
-        console.log(res)
-      }).catch(error =>{
-        console.log(error)
-      })
-      // await get("/api/get_brands?id=1").then(res => {
-      //   console.log(res)
-      // }).catch(error =>{
-      //   console.log("Error")
-      //   console.log(error)
-      // })
-
-      // await post("/api/add_brand", {"brand_name": "TEFAL"}).then(res =>{
-      //   console.log(res)
-      // }).catch(error => {
-      //   console.log(error)
-      // })
-      // await patch("/api/edit_brand", {id: 12, brand_name: "HP1"}).then(res =>{
-      //   console.log(res)
-      // }).catch(error =>{
-      //   console.log(error)
-      // })
-    }
-
-    window.onload = test()
-
-    </script>
     {% endblock %}
 
     {% block content %}
@@ -59,12 +10,11 @@
             <thead>
               <tr>
                 <th scope="col">#Номер заказа</th>
+                <th scope="col">ФИО клиента</th>
                 <th scope="col">Название</th>
-                <th scope="col">Модель</th>
                 <th scope="col">Брэнд</th>
-                <th scope="col">Тех. спецификация</th>
+                <th scope="col">Модель</th>
                 <th scope="col">Гарантия есть?</th>
-                <th scope="col">Клиент</th>
                 <th scope="col">Дата принятия заказа</th>
                 <th scope="col">Действие</th>
               </tr>
@@ -139,4 +89,80 @@
             </tbody>
           </table>
     </div>
+
+    {% block scripts_down %}
+        <script type="text/javascript">
+
+            const get = async (url) => {
+                const response = await axios.get(
+                    url
+                );
+                return await response.data
+            };
+
+            // Формат получаемых данных [id, client_name, product_name, brand, model, warranty_period, order_receipt_date]
+            async function addDataInTable(table_id){
+                await get("/api/get_order").then(res =>{
+                let data = res
+                let table = document.getElementById(table_id);
+                console.log(data)
+
+                // "id": res[0],
+                // "client_name": res[1],
+                // "product_name": res[2],
+                // "brand": res[3],
+                // 'model': res[4],
+                // 'warranty_period': res[5],
+                // 'order_receipt_date': res[6]
+
+                for (let one_data in data) {
+                    //console.log(data)
+                    let counter = 0;
+                    let new_row = table.insertRow(table.rows.length);
+                    for (let key in data[one_data]) {
+
+                        // Проверка на наличие гарнатийного периода
+                        if (key === "warranty_period") {
+                          let garanthy;
+                          if (Number([one_data][key]) < Number([one_data]["order_receipt_date"])) {
+                            garanthy = "Нет"
+                          }
+                          else{
+                            garanthy = "Да"
+                          }
+                          new_row.insertCell(counter).innerHTML = garanthy;
+                          counter++
+                          continue;
+                        }
+
+                        // Вставляем данные в ячейки новой строки
+                        new_row.insertCell(counter).innerHTML = data[one_data][key];
+                        counter++;
+                    }
+
+                    // Вставляем данные в ячейки новой строки
+                    new_row.insertCell(counter).innerHTML = `
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Действие
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Изменить</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Удалить</a></li>
+                            </ul>
+                        </div>
+                    `
+                }
+
+              }).catch(error =>{
+                console.log(error)
+                return null
+              })
+            }
+
+            window.onload = addDataInTable("table_orders");
+        </script>
+    {% endblock %}
+
     {% endblock %}
