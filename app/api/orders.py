@@ -5,7 +5,7 @@ from app.functions import unzipOneItem
 from app.api.ErrorMessages import OrdersAPIErrors, ClientsAPIErrors, ProductAPIErrors
 from collections import Counter
 
-orders_api = Blueprint('staff_api', __name__, template_folder="templates", url_prefix='/api')
+orders_api = Blueprint('orders_api', __name__, template_folder="templates", url_prefix='/api')
 
 
 @orders_api.route("/get_order", methods=["GET"])
