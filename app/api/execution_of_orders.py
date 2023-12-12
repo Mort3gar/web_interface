@@ -17,13 +17,13 @@ def get_execution():
             return json.dumps({
                 "id": res[0],
                 "client_name": res[1],
-                "warranty_period": res[2],
+                "warranty_period": str(res[2]),
                 "repair_type": res[3],
                 "repair_cost": res[4],
-                "order_execution_date": res[5],
+                "order_execution_date": str(res[5]),
                 "message": res[6],
-                "date_of_receipt": res[7],
-                "order_receipt_date": res[8]
+                "date_of_receipt": str(res[7]),
+                "order_receipt_date": str(res[8])
             }), 200, {'Content-Type': 'application/json'}
         else:
             return abort(409, ExecutionOfOrdersAPIErrors.idErr)
@@ -33,12 +33,13 @@ def get_execution():
             res.append({
                 "id": item[0],
                 "client_name": item[1],
-                "warranty_period": item[2],
+                "warranty_period": str(item[2]),
                 "repair_type": item[3],
                 "repair_cost": item[4],
-                "order_execution_date": item[5],
+                "order_execution_date": str(item[5]),
                 "message": item[6],
-                "date_of_receipt": item[7]
+                "date_of_receipt": str(item[7]),
+                "order_receipt_date": str(item[8])
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
