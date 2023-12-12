@@ -2,16 +2,16 @@
 
     {% block scripts %}
     <script>
-        function shower(divId) { 
+        function shower(divId) {
             $("#" + divId).show();
             //console.log("Я появился")
         }
-        
+
         function hider(divId){
             $("#" + divId).hide();
             //console.log("Я скрылся")
         }
-          
+
         function GFG_Fun(value) {
             if (value !== "choice_not_in_list") {
                 hider('hide_div')
@@ -19,7 +19,7 @@
             else{
                 shower('hide_div')
             }
-        } 
+        }
     </script>
     {% endblock %}
 
@@ -38,12 +38,12 @@
                     <div class="mb-3">
                         <label for="choice_post" class="form-label">Должность</label>
                         <select name="choice_select_post" id="choice_post" onclick="GFG_Fun(this.value)">
-                            <option value="choice_maintenance_technician">Техник-ремонтник</option>
+                            <!-- <option value="choice_maintenance_technician">Техник-ремонтник</option>
                             <option value="choice_master_receptionist">Мастер-приемщик</option>
                             <option value="choice_sales_consultant">Продавец-консультант</option>
                             <option value="choice_service_engineer">Сервисный-инженер</option>
                             <option value="choice_equipment_engineer">Инженер по эксплуатации оборудования</option>
-                            <option value="choice_not_in_list">Отсутствует в списке</option>
+                            <option value="choice_not_in_list">Отсутствует в списке</option> -->
                         </select>
                     </div>
                     <div id="hide_div" class="mb-3">
@@ -51,10 +51,103 @@
                     </div>
 
                     <div>
-                        <input type="submit" value="Сохранить" class="btn btn-dark">
+                        <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_staff_in_db()">
                     </div>
                 </form>            
             </div>
         </div>
     </div>
+    {% block scripts_down %}
+        <script type="text/javascript">
+        // Функции для ГЕТА
+            const get = async (url) => {
+                const response = await axios.get(
+                    url
+                );
+                return await response.data
+            };
+
+            // Формат получаемых данных [id, name, posts]
+            async function addDataInSelect(choice_id){
+                await get("/api/get_post").then(res =>{
+                let data = res;
+                let select = document.getElementById(choice_id);
+                //console.log(select.value);
+                
+                for (let index_data in data) {
+                    //console.log(data[index_data]["title"])
+                    let opt = document.createElement('option');
+                    opt.value = data[index_data]["title"];
+                    opt.innerHTML = data[index_data]["title"];
+                    select.appendChild(opt);
+                }
+
+                let opt = document.createElement('option');
+                opt.value = "choice_not_in_list";
+                opt.innerHTML = "Отсутствует в списке";
+                select.appendChild(opt);
+
+              }).catch(error =>{
+              console.log(error)
+                return null
+              })
+            }
+            window.onload = addDataInSelect("choice_post");
+
+        // Функции для ПОСТА
+        function clearInputs() { 
+            
+            // Очистить поля ввода
+            document.getElementById("staff_name").value = ""; 
+            document.getElementById("post_name").value = ""; 
+        } 
+
+        const post = async (url, dict_) => {
+            const response = await axios.post(
+                url, dict_
+            );
+            return await response.data
+        }
+
+        function get_data_from_input(){
+            let choice = $("#choice_post").val();
+            let name = $("#staff_name").val();
+            let post;
+            if (choice !== "choice_not_in_list"){
+                //post = choice.options[choice.selectedIndex].text
+                post = $("#choice_post :selected").text();
+            }
+            else{
+                post = $("#post_name").val();
+            }
+            console.log(name, post)
+            return {"name":name, "posts_id":post}
+        }
+
+        async function add_staff_in_db(){
+            let data = get_data_from_input();
+            let flag_empty = false;
+            for (let key in data){
+                if (data[key] === "") {
+                    flag_empty = true;
+                    break;
+                }
+            }
+
+
+            if (!flag_empty) {
+                await post("/api/add_staff", {"name": data["name"], "posts_id": data["posts_id"]}).then(res =>{
+                console.log(res)
+                clearInputs();
+                }).catch(error => {
+                    console.log(error)
+                })
+            }
+            else{
+                console.log("Не все поля заполнены!");
+            }    
+        }
+        
+        </script>
+    {% endblock %}
     {% endblock %}
