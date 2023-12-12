@@ -90,4 +90,81 @@
             </tbody>
         </table>
     </div>
+
+    {% block scripts_down %}
+        <script type="text/javascript">
+
+            const get = async (url) => {
+                const response = await axios.get(
+                    url
+                );
+                return await response.data
+            };
+
+            // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, order_execution_date, message, date_of_receipt]
+            async function addDataInTable(table_id){
+                await get("/api/get_order").then(res =>{
+                let data = res
+                let table = document.getElementById(table_id);
+                console.log(data)
+                let list_tag = ["id", "client_name"]
+                // "id": res[0],
+                // "client_name": res[1],
+                // "warranty_period": res[2],
+                // "repair_type": res[3],
+                // "repair_cost": res[4],
+                // "order_execution_date": res[5],
+                // "message": res[6],
+                // "date_of_receipt": res[7]
+
+                for (let one_data in data) {
+                    //console.log(data)
+                    let counter = 0;
+                    let new_row = table.insertRow(table.rows.length);
+                    for (let key in data[one_data]) {
+
+                        // Проверка на наличие гарнатийного периода
+                        if (key === "warranty_period") {
+                          let garanthy;
+                          if (Number([one_data][key]) < Number([one_data]["order_receipt_date"])) {
+                            garanthy = "Нет"
+                          }
+                          else{
+                            garanthy = "Да"
+                          }
+                          new_row.insertCell(counter).innerHTML = garanthy;
+                          counter++
+                          continue;
+                        }
+
+                        // Вставляем данные в ячейки новой строки
+                        new_row.insertCell(counter).innerHTML = data[one_data][key];
+                        counter++;
+                    }
+
+                    // Вставляем данные в ячейки новой строки
+                    new_row.insertCell(counter).innerHTML = `
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Действие
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Изменить</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Удалить</a></li>
+                            </ul>
+                        </div>
+                    `
+                }
+
+              }).catch(error =>{
+                console.log(error)
+                return null
+              })
+            }
+
+            window.onload = addDataInTable("table_orders");
+        </script>
+    {% endblock %}
+
     {% endblock %}
