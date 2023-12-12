@@ -20,8 +20,8 @@ def get_order():
                 "product_name": res[2],
                 "brand": res[3],
                 'model': res[4],
-                'warranty_period': res[5],
-                'order_receipt_date': res[6]
+                'warranty_period': str(res[5]),
+                'order_receipt_date': str(res[6])
             }), 200, {'Content-Type': 'application/json'}
         else:
             return abort(409, OrdersAPIErrors.idErr)
@@ -34,8 +34,8 @@ def get_order():
                 "product_name": item[2],
                 "brand": item[3],
                 'model': item[4],
-                'warranty_period': item[5],
-                'order_receipt_date': item[6]
+                'warranty_period': str(item[5]),
+                'order_receipt_date': str(item[6])
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
