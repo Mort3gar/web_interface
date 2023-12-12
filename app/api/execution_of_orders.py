@@ -13,7 +13,7 @@ def get_execution():
     data = request.args
     if "id" in data:
         if len(dbHandler.execute(f"select * from execution_of_orders where id = {data['id']}")) != 0:
-            res = dbHandler.execute(f"select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id where id = {data['id']}")
+            res = dbHandler.execute(f"select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id where id = {data['id']}")
             return json.dumps({
                 "id": res[0],
                 "client_name": res[1],
@@ -22,7 +22,8 @@ def get_execution():
                 "repair_cost": res[4],
                 "order_execution_date": res[5],
                 "message": res[6],
-                "date_of_receipt": res[7]
+                "date_of_receipt": res[7],
+                "order_receipt_date": res[8]
             }), 200, {'Content-Type': 'application/json'}
         else:
             return abort(409, ExecutionOfOrdersAPIErrors.idErr)
