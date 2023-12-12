@@ -20,72 +20,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">id - 1</th>
-                <td>Стиральная машинка</td>
-                <td>A-322</td>
-                <td>Bosch</td>
-                <td>Возможно не надо</td>
-                <td>Да</td>
-                <td>Виктор Палыч</td>
-                <td>20.20.2020</td>
-                <td>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                      Действие
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Изменить</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="#">Удалить</a></li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">id - 2</th>
-                <td>Кофеварка</td>
-                <td>A-322</td>
-                <td>Bosch</td>
-                <td>Возможно не надо</td>
-                <td>Да</td>
-                <td>Виктор Палыч</td>
-                <td>20.20.2020</td>
-                <td>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                      Действие
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Изменить</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="#">Удалить</a></li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">id - 3</th>
-                <td>Мясорубка</td>
-                <td>A-322</td>
-                <td>Bosch</td>
-                <td>Возможно не надо</td>
-                <td>Да</td>
-                <td>Виктор Палыч</td>
-                <td>20.20.2020</td>
-                <td>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                      Действие
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Изменить</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="#">Удалить</a></li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
+              <!-- Сюда будут вставляться строки с ячейками -->
             </tbody>
           </table>
     </div>
@@ -124,7 +59,11 @@
                         // Проверка на наличие гарнатийного периода
                         if (key === "warranty_period") {
                           let garanthy;
-                          if (Number([one_data][key]) < Number([one_data]["order_receipt_date"])) {
+                          let warranty_date = new Date((data[one_data][key]));
+                          let order_receipt_date = new Date(data[one_data]["order_receipt_date"]);
+
+                          // console.log(warranty_date.getTime() < order_receipt_date.getTime());
+                          if (warranty_date.getTime() < order_receipt_date.getTime()) {
                             garanthy = "Нет"
                           }
                           else{

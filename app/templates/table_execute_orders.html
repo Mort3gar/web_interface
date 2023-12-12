@@ -101,46 +101,38 @@
                 return await response.data
             };
 
-            // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, order_execution_date, message, date_of_receipt]
+            // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, order_execution_date, message, date_of_receipt, order_receipt_date]
             async function addDataInTable(table_id){
-                await get("/api/get_order").then(res =>{
+                await get("/api/get_execution").then(res =>{
                 let data = res
                 let table = document.getElementById(table_id);
                 console.log(data)
-                let list_tag = ["id", "client_name"]
-                // "id": res[0],
-                // "client_name": res[1],
-                // "warranty_period": res[2],
-                // "repair_type": res[3],
-                // "repair_cost": res[4],
-                // "order_execution_date": res[5],
-                // "message": res[6],
-                // "date_of_receipt": res[7]
+                let list_tag = ["id", "client_name", "repair_type", "repair_cost", "order_execution_date", "message", "date_of_receipt"]
 
                 for (let one_data in data) {
                     //console.log(data)
                     let counter = 0;
                     let new_row = table.insertRow(table.rows.length);
-                    for (let key in data[one_data]) {
+                    for (let key in list_tag) {
 
-                        // Проверка на наличие гарнатийного периода
-                        if (key === "warranty_period") {
-                          let garanthy;
-                          if (Number([one_data][key]) < Number([one_data]["order_receipt_date"])) {
-                            garanthy = "Нет"
-                          }
-                          else{
-                            garanthy = "Да"
-                          }
-                          new_row.insertCell(counter).innerHTML = garanthy;
-                          counter++
-                          continue;
-                        }
 
                         // Вставляем данные в ячейки новой строки
                         new_row.insertCell(counter).innerHTML = data[one_data][key];
                         counter++;
                     }
+
+                    // Проверка на наличие гарантии
+                    let warranty_date = new Date((data[one_data]["warranty_period"]));
+                    let order_receipt_date = new Date(data[one_data]["order_receipt_date"]);
+
+                    // console.log(warranty_date.getTime() < order_receipt_date.getTime());
+                    if (warranty_date.getTime() < order_receipt_date.getTime()) {
+                      garanthy = data[one_data]["repair_cost"]
+                    }
+                    else{
+                      garanthy = 0
+                    }
+                    new_row.insertCell(counter).innerHTML = garanthy;
 
                     // Вставляем данные в ячейки новой строки
                     new_row.insertCell(counter).innerHTML = `
@@ -163,7 +155,7 @@
               })
             }
 
-            window.onload = addDataInTable("table_orders");
+            window.onload = addDataInTable("table_execute_orders");
         </script>
     {% endblock %}
 
