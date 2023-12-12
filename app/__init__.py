@@ -17,5 +17,10 @@ dbHandler.loadDump()
 
 app.register_blueprint(brands_api)
 app.register_blueprint(clients_api)
+app.register_blueprint(orders_api)
+app.register_blueprint(posts_api)
+app.register_blueprint(product_api)
+app.register_blueprint(staff_api)
+app.register_blueprint(types_of_repairs_api)
 
 app.run(debug=True)
