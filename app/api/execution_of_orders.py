@@ -72,7 +72,7 @@ def add_execution():
 @execution_api.route("/edit_execution", methods=["PATCH"])
 def edit_execution():
     data = request.json
-    if Counter(['id', 'order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date' 'message',
+    if Counter(['id', 'order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message',
                 'date_of_receipt',
                 'amount_of_payment']) == Counter(list(data.keys())):
         if len(dbHandler.execute(f"select * from orders where id = {data['order_id']}")) == 0:
