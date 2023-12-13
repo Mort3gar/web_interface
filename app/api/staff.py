@@ -35,12 +35,13 @@ def get_staff():
 @staff_api.route("/add_staff", methods=["POST"])
 def add_staff():
     data = request.json
+    print(data)
     if Counter(['name', 'posts_id']) == Counter(list(data.keys())):
-        try:
-            dbHandler.add("staff", ["name", 'posts_id'], [data['brand_name'].strip(), data['posts_id']])
-        except Exception as e:
-            print(e)
-            return abort(500, "Произошла ошибка")
+        # try:
+        dbHandler.add("staff", ["name", 'posts_id'], [data['name'].strip(), data['posts_id']])
+        # except Exception as e:
+        #     print(e.args)
+        #     return abort(500, "Произошла ошибка")
         return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
     else:
         return abort(403, "Произошла ошибка")
@@ -52,7 +53,7 @@ def edit_staff():
     if Counter(['id', 'name', 'posts_id']) == Counter(list(data.keys())):
         try:
             if len(dbHandler.execute(f"select * from staff where id = {data['id']}")) != 0:
-                dbHandler.update("staff", ["name", 'posts_id'], [data['brand_name'].strip(), data['posts_id']], data['id'])
+                dbHandler.update("staff", ["name", 'posts_id'], [data['name'].strip(), data['posts_id']], data['id'])
                 return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
             else:
                 return abort(409, StaffAPIErrors.idErr)

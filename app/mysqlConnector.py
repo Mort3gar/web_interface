@@ -54,7 +54,7 @@ class DataBaseHandler:
         return self.__executeQuery(query)
 
     def add(self, table_name, columns, values):
-        self.__executeQuery(f"""insert into {table_name} ({','.join(columns) if type(columns) == list and len(columns) > 1 else columns[0] if type(columns)==list else columns}) values ({','.join([f"'{item}'" if type(item) == str else item for item in values]) if type(values) == list and len(values) > 1 else values[0] if type(values)==list else f"'{values}'" if type(values)==str else values });""")
+        self.__executeQuery(f"""insert into {table_name} ({','.join(columns) if type(columns) == list and len(columns) > 1 else columns[0] if type(columns)==list else columns}) values ({','.join([f"'{item}'" if type(item) == str else str(item) for item in values]) if type(values) == list else f"'{values}'" if type(values)==str else str(values) });""")
 
     def update(self, table_name, columns, values, id):
         if type(columns) != list:
