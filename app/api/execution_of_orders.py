@@ -49,7 +49,7 @@ def get_execution():
 @execution_api.route("/add_execution", methods=["POST"])
 def add_execution():
     data = request.json
-    if Counter(['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date' 'message', 'date_of_receipt',
+    if Counter(['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message', 'date_of_receipt',
                 'amount_of_payment']) == Counter(list(data.keys())):
         if len(dbHandler.execute(f"select * from orders where id = {data['order_id']}")) == 0:
             return abort(409, OrdersAPIErrors.idErr)
