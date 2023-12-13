@@ -99,9 +99,6 @@
                     }
                 }
 
-                //console.log(flag_empty);
-
-                // !!!!!! Тута
                 if (!flag_empty) {
 
                     await post("/api/add_staff", {"name": data["name"], "posts_id": data["posts_id"]}).then(res =>{
