@@ -4,12 +4,12 @@
     <script>
         function shower(divId) { 
             $("#" + divId).show();
-            console.log("Я появился")
+            //console.log("Я появился")
         }
         
         function hider(divId){
             $("#" + divId).hide();
-            console.log("Я скрылся") 
+            //console.log("Я скрылся") 
         }
           
         function GFG_Fun(value) {
@@ -37,22 +37,13 @@
                     <div class="mb-3">
                         <label for="choice_brand" class="form-label">Брэнд</label>
                         <select name="choice_select_brand" id="choice_brand" onclick="GFG_Fun(this.value)">
-                            <option value="choice_bosh">Bosh</option>
-                            <option value="choice_lg">LG</option>
-                            <option value="choice_xiaomi">Xiaomi</option>
-                            <option value="phillips">Philips</option>
-                            <option value="brown">Brown</option>
-                            <option value="choice_not_in_list">Отсутствует в списке</option>
+                            <!-- Здесь будут данные из БД -->
                         </select>
                     </div>
+
                     <div id="hide_div" class="mb-3">
                         <input type="text" id="brand_name" class="form-control" placeholder="Введите название брэнда:">
                     </div>
-
-                    <!-- <div class="mb-3">
-                        <label for="brend_name" class="form-label">Брэнд</label>
-                        <input type="text" id="brend_name" class="form-control" placeholder="Введите название брэнда:" required>
-                    </div> -->
     
                     <div class="mb-3">
                         <label for="model_name" class="form-label">Модель</label>
@@ -69,10 +60,10 @@
                         <input type="date" id="garantity_period" class="form-control" placeholder="Введите гарантийный период:" required>
                     </div>
     
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="image_loader" class="form-label">Фотография</label>
                         <input type="file" id="image_loader" class="form-control" placeholder="фотография">
-                    </div>
+                    </div> -->
                     
                     <div class="mb-3">
                         <label for="client_name" class="form-label">ФИО клиента</label>
@@ -90,10 +81,161 @@
                     </div>
 
                     <div>
-                        <input type="submit" value="Сохранить" class="btn btn-dark">
+                        <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_order_in_db()">
                     </div>
                 </form>            
             </div>
         </div>
     </div>
+
+    {% block scripts_down %}
+        <script type="text/javascript">
+        // Функции для ГЕТА
+            const get = async (url) => {
+                const response = await axios.get(
+                    url
+                );
+                return await response.data
+            };
+
+            // Формат получаемых данных [id, name]
+            async function addDataInSelectBrand(choice_id){
+                await get("/api/get_brands").then(res =>{
+                let data = res;
+                let select = document.getElementById(choice_id);
+                //console.log(select.value);
+                
+                for (let index_data in data) {
+                    //console.log(data[index_data]["title"])
+                    let opt = document.createElement('option');
+                    opt.value = data[index_data]["id"];
+                    opt.innerHTML = data[index_data]["name"];
+                    select.appendChild(opt);
+                }
+
+                let opt = document.createElement('option');
+                opt.value = "choice_not_in_list";
+                opt.innerHTML = "Отсутствует в списке";
+                select.appendChild(opt);
+
+              }).catch(error =>{
+              console.log(error)
+                return null
+              })
+            }
+
+            window.onload = addDataInSelectBrand("choice_brand");
+
+        // Функции для ПОСТА
+        function clearInputs() {
+
+            // Очистить поля ввода
+            document.getElementById("product_name").value = "";
+            document.getElementById("brand_name").value = "";
+            document.getElementById("model_name").value = "";
+            document.getElementById("text_specification").value = "";
+            document.getElementById("client_name").value = "";
+            document.getElementById("telephone_number").value = "";
+        }
+
+        const post = async (url, dict_) => {
+            const response = await axios.post(
+                url, dict_
+            );
+            return await response.data
+        }
+
+        function get_data_from_input(){
+            let product_name = $("#product_name").val();
+            let brand_name;
+            let model_name = $("#model_name").val();
+            let text_specification = $("#text_specification").val();
+            let warranty_date = $("#garantity_period").val();
+            let client_name = $("#client_name").val();
+            let telephone_number = $("#telephone_number").val();
+            let date_order_acceptance = $("#date_order_acceptance").val();
+
+            let choice = $("#choice_brand").val();
+
+            if (choice !== "choice_not_in_list"){
+                //post = choice.options[choice.selectedIndex].text
+                brand_name = $("#choice_brand :selected").text();
+            }
+            else{
+                brand_name = $("#brand_name").val();
+            }
+
+            console.log(name, brand_name)
+
+            return {"product_name": product_name, "brand_name": brand_name, "model_name": model_name, "text_specification": text_specification, 
+            "warranty_date": warranty_date, "client_name": client_name, "telephone_number": telephone_number, "date_order_acceptance": date_order_acceptance}
+        }
+
+        async function add_order_in_db(){
+            let data = get_data_from_input();
+            console.log(data)
+            let flag_empty = false;
+            for (let key in data){
+                if (data[key] === "") {
+                    flag_empty = true;
+                    break;
+                }
+            }
+            console.log(flag_empty);
+
+            if (!flag_empty) {
+                await post("/api/add_client", {"name": data["client_name"]}).then(res =>{
+                console.log(res)
+                // clearInputs();
+                }).catch(error => {
+                    console.log(error)
+                })
+
+                await post("/api/add_brand", {"brand_name": data["brand_name"]}).then(res =>{
+                console.log(res)
+                // clearInputs();
+                }).catch(error => {
+                    console.log(error)
+                })
+
+                // 'name', 'brands_id', 'model', 'technical_specification', 'warranty_period'
+                let data_brands;
+                let brand_id;
+                await get("/api/get_brands").then(res =>{
+                    data_brands = res;
+                }).catch(error =>{
+                console.log(error)
+                })
+
+                for (let brand in data_brands) {
+                    if (data_brands[brand]["name"] === data["posts_name"]) {
+                        brand_id = ata_brands[brand]["id"];
+                        break;
+                    }
+                }
+
+                //!!!!!!!!!
+                await post("/api/add_product", {"name": data["client_name"], "brands_id": brand_id, "model":data["model_name"],
+                "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]}
+                ).then(res =>{
+                console.log(res)
+                // clearInputs();
+                }).catch(error => {
+                    console.log(error)
+                })
+
+                await post("/api/add_order", {"name": data["name"], "posts_id": data["posts_id"]}).then(res =>{
+                console.log(res)
+                // clearInputs();
+                }).catch(error => {
+                    console.log(error)
+                })
+            }
+            else{
+                console.log("Не все поля заполнены!");
+            }
+        }
+
+        </script>
+    {% endblock %}
     {% endblock %}

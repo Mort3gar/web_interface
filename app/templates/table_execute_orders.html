@@ -1,9 +1,9 @@
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 
-    {% block scripts %}
-    {% endblock %}
+{% block scripts %}
+{% endblock %}
 
-    {% block content %}
+{% block content %}
     <div class="container mt-5">
         <table class="table table-striped table-hover" id="table_execute_orders">
             <caption>Таблица исполнения заказов</caption>
@@ -31,6 +31,7 @@
     {% block scripts_down %}
         <script type="text/javascript">
 
+            // Функция гет запроса
             const get = async (url) => {
                 const response = await axios.get(
                     url
@@ -41,60 +42,63 @@
             // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, order_execution_date, message, date_of_receipt, order_receipt_date]
             async function addDataInTable(table_id){
                 await get("/api/get_execution").then(res =>{
-                let data = res
-                let table = document.getElementById(table_id);
-                console.log(data)
-                let list_tag = ["id", "client_name", "repair_type", "repair_cost", "order_execution_date", "message", "date_of_receipt"]
-                let counter;
+                    
+                    let data = res
+                    let table = document.getElementById(table_id);
 
-                for (let one_data in data) {
-                    //console.log(data)
-                    counter = 0;
-                    let new_row = table.insertRow(table.rows.length);
-                    for (let key in list_tag) {
-                        // Вставляем данные в ячейки новой строки
-                        new_row.insertCell(counter).innerHTML = data[one_data][list_tag[key]];
+                    console.log(data)
+
+                    // Список ожидаемых прилетающих ключей
+                    let list_tag = ["id", "client_name", "repair_type", "repair_cost", "order_execution_date", "message", "date_of_receipt"]
+
+                    // Счетчик строк
+                    let counter;
+
+                     // Бежим по индексам даты и по ключам из list_tag, вставляем соответствующие значения в таблицу
+                    for (let one_data in data) {
+                        //console.log(data)
+
+                        counter = 0;
+                        let new_row = table.insertRow(table.rows.length);
+
+                        for (let key in list_tag) {
+                            // Вставляем данные в ячейки новой строки
+                            new_row.insertCell(counter).innerHTML = data[one_data][list_tag[key]];
+                            counter++;
+                        }
+
+                        // Проверка на наличие гарантии
+                        let warranty_date = new Date((data[one_data]["warranty_period"]));
+                        let order_receipt_date = new Date(data[one_data]["order_receipt_date"]);
+                        if (warranty_date.getTime() < order_receipt_date.getTime()) {
+                            garanthy = data[one_data]["repair_cost"]
+                        } else{garanthy = 0;}
+
+                        // Вставляем наличие проверенной гарантии
+                        new_row.insertCell(counter).innerHTML = garanthy;
                         counter++;
+
+                        // Вставляем данные в ячейки новой строки
+                        new_row.insertCell(counter).innerHTML = `
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действие
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Изменить</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Удалить</a></li>
+                                </ul>
+                            </div>
+                        `
                     }
-
-                    // Проверка на наличие гарантии
-                    let warranty_date = new Date((data[one_data]["warranty_period"]));
-                    let order_receipt_date = new Date(data[one_data]["order_receipt_date"]);
-
-                    // console.log(warranty_date.getTime() < order_receipt_date.getTime());
-                    if (warranty_date.getTime() < order_receipt_date.getTime()) {
-                      garanthy = data[one_data]["repair_cost"]
-                    }
-                    else{
-                      garanthy = 0
-                    }
-
-                    new_row.insertCell(counter).innerHTML = garanthy;
-                    counter++;
-
-                    // Вставляем данные в ячейки новой строки
-                    new_row.insertCell(counter).innerHTML = `
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Действие
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Изменить</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Удалить</a></li>
-                            </ul>
-                        </div>
-                    `
-                }
-
-              }).catch(error =>{
-                console.log(error)
-                return null
+                }).catch(error =>{
+                    console.log(error)
               })
             }
 
+            // Отработка функции при загрузке окна
             window.onload = addDataInTable("table_execute_orders");
         </script>
     {% endblock %}
-
-    {% endblock %}
+{% endblock %}

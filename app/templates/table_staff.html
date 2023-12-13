@@ -21,6 +21,7 @@
     {% block scripts_down %}
         <script type="text/javascript">
 
+            // Функция гет запроса
             const get = async (url) => {
                 const response = await axios.get(
                     url
@@ -28,18 +29,21 @@
                 return await response.data
             };
 
-            // Формат получаемых данных [id, name, posts]
+            // Формат получаемых данных [id, name, title(post)]
             async function addDataInTable(table_id){
                 await get("/api/get_staff").then(res =>{
+
                 let data = res
                 let table = document.getElementById(table_id);
-
+                
+                // Бежим по индексам даты и по ключам, вставляем соответствующие значения в таблицу
                 for (let one_data in data) {
-                    //console.log(data)
+                    // счетчик строки
                     let counter = 0;
+
                     let new_row = table.insertRow(table.rows.length);
+
                     for (let key in data[one_data]) {
-                        //console.log(key)
                         // Вставляем данные в ячейки новой строки
                         new_row.insertCell(counter).innerHTML = data[one_data][key];
                         counter++;
@@ -60,10 +64,11 @@
                     `
                 }
               }).catch(error =>{
-              console.log(error)
-                return null
+                console.log(error)
               })
             }
+
+            // Отработка функции при загрузке окна
             window.onload = addDataInTable("table_orders");
         </script>
     {% endblock %}
