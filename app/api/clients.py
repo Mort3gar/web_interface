@@ -17,7 +17,8 @@ def get_client():
             print(res)
             return json.dumps({
                 "id": res[0],
-                "name": res[1]
+                "name": res[1],
+                "phoneNumber": res[2]
             }), 200, {'Content-Type': 'application/json'}
         else:
             return abort(409, ClientsAPIErrors.idErr)
@@ -26,7 +27,8 @@ def get_client():
         for item in dbHandler.execute("select * from clients"):
             res.append({
                 "id": item[0],
-                "name": item[1]
+                "name": item[1],
+                "phoneNumber": item[2]
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
@@ -34,10 +36,10 @@ def get_client():
 @clients_api.route("/add_client", methods=["POST"])
 def add_client():
     data = request.json
-    if "name" in data:
+    if "name" in data and 'phoneNumber' in data:
         # if data['name'].strip() not in unzipOneItem(dbHandler.execute("select name from clients")):
         try:
-            dbHandler.add("clients", "name", data['name'].strip())
+            dbHandler.add("clients", ["name", "phoneNumber"], [data['name'].strip(), data['phoneNumber'].strip()])
         except Exception as e:
             print(e)
             return abort(500, ClientsAPIErrors.errorOccurred)
@@ -51,10 +53,10 @@ def add_client():
 @clients_api.route("/edit_client", methods=["PATCH"])
 def edit_client():
     data = request.json
-    if 'id' in data and 'name' in data:
+    if 'id' in data and 'name' in data and 'phoneNumber' in data:
         try:
             if len(dbHandler.execute(f"select * from clients where id = {data['id']}")) != 0:
-                dbHandler.update("clients", "name", data['name'].strip(), data['id'])
+                dbHandler.update("clients", ["name", 'phoneNumber'], [data['name'].strip(), data['phoneNumber'].strip()], data['id'])
                 return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
             else:
                 return abort(409, ClientsAPIErrors.idErr)

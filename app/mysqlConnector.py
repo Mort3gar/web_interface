@@ -19,6 +19,7 @@ class DataBaseHandler:
                 password=self.password,
                 database=self.dbName
             )
+            self.cnx.autocommit = True
         except conn.Error as err_:
             if err_.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Неверный логин или пароль")
@@ -28,6 +29,7 @@ class DataBaseHandler:
                     user='root',
                     password=self.password
                 )
+                self.cnx.autocommit = True
                 with self.cnx.cursor() as cursor_:
                     cursor_.execute(f"create database if not exists {self.dbName}")
                     cursor_.execute(f"use {self.dbName}")
@@ -43,8 +45,6 @@ class DataBaseHandler:
         self.cnx.reconnect()
         with self.cnx.cursor(buffered=True) as cursor:
             cursor.execute(query)
-            if "insert" in query.lower() or "update" in query.lower() or "delete" in query.lower():
-                self.cnx.commit()
             try:
                 return cursor.fetchall()
             except TypeError:
@@ -71,11 +71,6 @@ class DataBaseHandler:
         if len(self.__executeQuery("show tables")) == 0:
             self.__loadSchema()
             self.__loadData()
-        # with self.cnx.cursor(buffered=True) as cursor:
-        #     cursor.execute("show tables")
-        #     if len(cursor.fetchall()) == 0:
-        #         self.__loadSchema()
-        #         self.__loadData()
 
     def __loadSchema(self):
         with open("sql_schema.json", "r", encoding="utf-8") as file:
