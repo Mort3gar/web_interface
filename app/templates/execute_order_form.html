@@ -83,7 +83,7 @@
                 let type_repair = $("#type_repair").val();
                 let repair_cost = $("#repair_cost").val();
 
-                let warranty_date = $("#date_execute").val();
+                let date_execute = $("#date_execute").val();
                 let receipt_date = $("#receipt_date").val();
 
                 let staff = $("#executer :selected").text();
@@ -179,7 +179,7 @@
 
                     // Поиск необходимой даты
                     for (let order_index in data_orders) {
-                        if (data_orders[order_index]["id"] === data[Number("order_id")]) {
+                        if (data_orders[order_index]["id"] === Number(data["order_id"])) {
                             date_order_receipt = new Date(data_orders[order_index]["order_receipt_date"]);
                             current_order = data_orders[order_index]
                             break;
@@ -189,7 +189,7 @@
                     // вычисление стоимость исполнения услуг
                     let payment;
                     let warranty_date = new Date(data["warranty_date"]);
-                    if (warranty_date.getTime() < order_receipt_date.getTime()) { 
+                    if (warranty_date.getTime() < date_order_receipt.getTime()) { 
                         payment = data["repair_cost"]
                     }
                     else{ payment = 0 }
@@ -201,13 +201,14 @@
 
                     // Формат получаемых данных [id, desc]
                     await get("/api/get_types_of_repairs").then(res =>{
-                        data_orders = res.reverse();
+                        data_types_of_repairs = res.reverse();
                     }).catch(error =>{
                         console.log(error)
                     })
 
                     // Поиск необходимой починки (для id)
                     for (let type_repair_index in data_types_of_repairs) {
+                        // consol.log(data_types_of_repairs[type_repair_index]["desc"], data["type_repair"])
                         if (data_types_of_repairs[type_repair_index]["desc"] === data["type_repair"]) {
                             id_types_of_repair = data_types_of_repairs[type_repair_index]["id"]
                             break;
@@ -216,9 +217,12 @@
 
                     // {"order_id":order_id, "type_repair":type_repair, "repair_cost":repair_cost, "date_execute": date_execute, 
                     // "receipt_date":receipt_date, "message":message}
-
-                    // формат отправляемых данных ['order_id', 'types_of_repairs_id', 'repair_cost',
+                    // формат отправляемых данных (['order_id', 'types_of_repairs_id', 'repair_cost',
                     // 'order_execution_date' 'message', 'date_of_receipt', 'amount_of_payment']
+                    console.log({"order_id": data["order_id"], "types_of_repairs_id": id_types_of_repair,
+                        "repair_cost": data["repair_cost"], "order_execution_date": data["date_execute"], "message": data["message"], 
+                        "date_of_receipt": data["receipt_date"], "amount_of_payment": payment})
+
                     await post("/api/add_execution", {"order_id": data["order_id"], "types_of_repairs_id": id_types_of_repair,
                         "repair_cost": data["repair_cost"], "order_execution_date": data["date_execute"], "message": data["message"], 
                         "date_of_receipt": data["receipt_date"], "amount_of_payment": payment}).then(res =>{
