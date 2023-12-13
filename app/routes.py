@@ -47,3 +47,18 @@ def execute_order_form():
 @app.route("/add_staff_form", methods=["GET"])
 def add_staff():
     return render_template("add_staff_form.html")
+
+
+@app.route("/edit_data_order_table", methods=["GET"])
+def edit_data_order_table():
+    return render_template("edit_data_order_table.html")
+
+
+@app.route("/edit_execute_orders", methods=["GET"])
+def edit_execute_orders():
+    return render_template("edit_execute_orders.html")
+
+
+@app.route("/edit_staff", methods=['GET'])
+def edit_staff():
+    return render_template("edit_staff.html")
