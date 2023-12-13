@@ -62,8 +62,9 @@
                 return await response.data
             };
 
-            // Формат получаемых данных [id, title]
+            
             async function addDataInSelect(choice_id){
+                // Формат получаемых данных [id, title]
                 await get("/api/get_post").then(res =>{
 
                 let data = res;
@@ -194,7 +195,7 @@
                             break;
                         }
                     }
-                    
+
                     // Формат отправляемых данных ['name', 'posts_id']
                     await post("/api/add_staff", {"name": data["name"], "posts_id": post_id}).then(res =>{
                         console.log(res)
