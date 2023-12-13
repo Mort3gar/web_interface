@@ -57,7 +57,7 @@ def add_execution():
             return abort(409, TypesOfRepairsAPIErrors.idErr)
         try:
             dbHandler.add("execution_of_orders",
-                          ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date' 'message',
+                          ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message',
                            'date_of_receipt', 'amount_of_payment'],
                           [data['order_id'], data['types_of_repairs_id'], data['repair_cost'],
                            data['order_execution_date'], data['message'], data['date_of_receipt'],
