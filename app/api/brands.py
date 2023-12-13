@@ -1,4 +1,8 @@
 import json
+
+import flask
+import mysql.connector.errors
+
 from app.mysqlConnector import dbHandler
 from flask import request, Blueprint, abort
 from app.functions import unzipOneItem
@@ -62,5 +66,18 @@ def edit_brand():
         except ValueError as e:
             print(e)
             return abort(409, BrandsAPIErrors.colValLenErr)
+    else:
+        return abort(409, BrandsAPIErrors.errorOccurred)
+
+
+@brands_api.route("/delete_brand", methods=["POST"])
+def delete_brand():
+    data = request.json
+    if 'id' in data:
+        try:
+            dbHandler.execute(f"delete from brands where id = {data['id']}")
+        except Exception as e:
+            return json.dumps({"success": "False"}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
     else:
         return abort(409, BrandsAPIErrors.errorOccurred)

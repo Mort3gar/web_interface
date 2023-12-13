@@ -76,3 +76,16 @@ def edit_client():
             return abort(409, ProductAPIErrors.colValLenErr)
     else:
         return abort(409, ProductAPIErrors.errorOccurred)
+
+
+@product_api.route("/delete_product", methods=["POST"])
+def delete_product():
+    data = request.json
+    if 'id' in data:
+        try:
+            dbHandler.execute(f"delete from product where id = {data['id']}")
+        except Exception as e:
+            return json.dumps({"success": "False"}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
+    else:
+        return abort(409, ProductAPIErrors.errorOccurred)

@@ -62,3 +62,16 @@ def edit_staff():
             return abort(409, StaffAPIErrors.colValLenErr)
     else:
         return abort(409, StaffAPIErrors.errorOccurred)
+
+
+@staff_api.route("/delete_staff", methods=["POST"])
+def delete_order():
+    data = request.json
+    if 'id' in data:
+        try:
+            dbHandler.execute(f"delete from staff where id = {data['id']}")
+        except Exception as e:
+            return json.dumps({"success": "False"}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
+    else:
+        return abort(409, StaffAPIErrors.errorOccurred)

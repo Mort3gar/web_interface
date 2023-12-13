@@ -13,7 +13,9 @@ def get_order():
     data = request.args
     if 'id' in data:
         if int(data['id']) in unzipOneItem(dbHandler.execute(f"select id from orders")):
-            res = dbHandler.execute(f"select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id where orders.id = {data['id']}")[0]
+            res = dbHandler.execute(
+                f"select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id where orders.id = {data['id']}")[
+                0]
             return json.dumps({
                 "id": res[0],
                 "client_name": res[1],
@@ -27,7 +29,8 @@ def get_order():
             return abort(409, OrdersAPIErrors.idErr)
     else:
         res = []
-        for item in dbHandler.execute("select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id"):
+        for item in dbHandler.execute(
+                "select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id"):
             res.append({
                 "id": item[0],
                 "client_name": item[1],
@@ -49,7 +52,8 @@ def add_order():
         if len(dbHandler.execute(f"select * from product where id = {data['product_id']}")) == 0:
             return abort(409, ProductAPIErrors.idErr)
         try:
-            dbHandler.add('orders', ['clients_id', 'product_id', 'guaranty', 'order_receipt_date'], [data['clients_id'], data['product_id'], 0, data['order_receipt_date']])
+            dbHandler.add('orders', ['clients_id', 'product_id', 'guaranty', 'order_receipt_date'],
+                          [data['clients_id'], data['product_id'], 0, data['order_receipt_date']])
         except Exception as e:
             print(e)
             return abort(500, OrdersAPIErrors.errorOccurred)
@@ -68,11 +72,25 @@ def edit_order():
             return abort(409, ProductAPIErrors.idErr)
         try:
             if len(dbHandler.execute(f"select * from orders where id = {data['id']}")) != 0:
-                dbHandler.update("orders", ['clients_id', 'product_id', 'order_receipt_date'], [data['clients_id'], data['product_id'], data['order_receipt_date']], data['id'])
+                dbHandler.update("orders", ['clients_id', 'product_id', 'order_receipt_date'],
+                                 [data['clients_id'], data['product_id'], data['order_receipt_date']], data['id'])
             else:
                 return abort(409, OrdersAPIErrors.idErr)
         except ValueError as e:
             print(e)
             return abort(409, OrdersAPIErrors.colValLenErr)
+    else:
+        return abort(409, OrdersAPIErrors.errorOccurred)
+
+
+@orders_api.route("/delete_order", methods=["POST"])
+def delete_order():
+    data = request.json
+    if 'id' in data:
+        try:
+            dbHandler.execute(f"delete from orders where id = {data['id']}")
+        except Exception as e:
+            return json.dumps({"success": "False"}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
     else:
         return abort(409, OrdersAPIErrors.errorOccurred)

@@ -62,3 +62,16 @@ def edit_client():
             return abort(409, PostsAPIErrors.colValLenErr)
     else:
         return abort(409, PostsAPIErrors.errorOccurred)
+
+
+@posts_api.route("/delete_post", methods=["POST"])
+def delete_post():
+    data = request.json
+    if 'id' in data:
+        try:
+            dbHandler.execute(f"delete from posts where id = {data['id']}")
+        except Exception as e:
+            return json.dumps({"success": "False"}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
+    else:
+        return abort(409, PostsAPIErrors.errorOccurred)
