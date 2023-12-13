@@ -10,6 +10,7 @@ from app.api.posts import posts_api
 from app.api.product import product_api
 from app.api.staff import staff_api
 from app.api.types_of_repairs import types_of_repairs_api
+from app.api.report import report_api
 
 app = Flask(__name__)
 
@@ -26,5 +27,6 @@ app.register_blueprint(posts_api)
 app.register_blueprint(product_api)
 app.register_blueprint(staff_api)
 app.register_blueprint(types_of_repairs_api)
+app.register_blueprint(report_api)
 
 app.run(debug=True)
