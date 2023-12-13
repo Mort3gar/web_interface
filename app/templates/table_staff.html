@@ -35,7 +35,7 @@
 
                 let data = res
                 let table = document.getElementById(table_id);
-                
+
                 // Бежим по индексам даты и по ключам, вставляем соответствующие значения в таблицу
                 for (let one_data in data) {
                     // счетчик строки
@@ -48,7 +48,7 @@
                         new_row.insertCell(counter).innerHTML = data[one_data][key];
                         counter++;
                     }
-
+                    
                     // Вставляем данные в ячейки новой строки
                     new_row.insertCell(counter).innerHTML = `
                         <div class="btn-group">
@@ -56,7 +56,7 @@
                                 Действие
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Изменить</a></li>
+                                <li><a class="dropdown-item" href="edit_staff?id=${data[one_data]["id"]}">Изменить</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Удалить</a></li>
                             </ul>

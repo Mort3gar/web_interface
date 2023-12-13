@@ -189,7 +189,7 @@
             if (!flag_empty) {
 
                 // Формат отправляемых данных [name]
-                await post("/api/add_client", {"name": data["client_name"]}).then(res =>{
+                await post("/api/add_client", {"name": data["client_name"], "phoneNumber": data["telephone_number"]}).then(res =>{
                     console.log(res)
                 }).catch(error => {
                     console.log(error)
@@ -213,9 +213,9 @@
                     console.log(error)
                 })
 
-                for (let brand in data_brands) {
-                    if (data_brands[brand]["name"] === data["posts_name"]) {
-                        brand_id = data_brands[brand]["id"];
+                for (let brand_index in data_brands) {
+                    if (data_brands[brand_index]["name"] === data["brand_name"]) {
+                        brand_id = data_brands[brand_index]["id"];
                         break;
                     }
                 }

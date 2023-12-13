@@ -224,7 +224,7 @@
                         "date_of_receipt": data["receipt_date"], "amount_of_payment": payment})
 
                     await post("/api/add_execution", {"order_id": data["order_id"], "types_of_repairs_id": id_types_of_repair,
-                        "repair_cost": data["repair_cost"], "order_execution_date": data["date_execute"], "message": data["message"], 
+                        "repair_cost": data["repair_cost"], "order_execution_date": data["date_execute"], "message": Boolean(data["message"]), 
                         "date_of_receipt": data["receipt_date"], "amount_of_payment": payment}).then(res =>{
                         console.log(res)
                     }).catch(error => {
@@ -257,14 +257,18 @@
                     // "receipt_date":receipt_date, "message":message}
 
                     // Поиск id добавленного исполненного заказа
+
+                    // ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date' 'message', 'date_of_receipt', 'amount_of_payment']
+
                     for (let execute_order_index in execute_orders) {
                         if (
+                            execute_orders[execute_order_index]["order_id"] === current_order["id"] &&
                             execute_orders[execute_order_index]["repair_type"] === data["type_repair"] &&
                             execute_orders[execute_order_index]["repair_cost"] === data["repair_cost"] &&
                             execute_orders[execute_order_index]["order_execution_date"] === data["date_execute"] &&
                             Number(execute_orders[execute_order_index]["message"]) === Number(data["message"]) &&
                             execute_orders[execute_order_index]["date_of_receipt"] === data["receipt_date"] &&
-                            execute_orders[execute_order_index]["order_receipt_date"] === current_order["order_receipt_date"]
+                            execute_orders[execute_order_index]["amount_of_payment"] === payment
                             ) {
                                 execute_order_id = execute_orders[execute_order_index]["id"];
                                 break;
@@ -289,14 +293,15 @@
                     // Поиск id добавленного исполненного заказа
                     for (let staff_index in staffs) {
                         if (
-                            staffs[staff_index]["repair_type"] === post_and_name[0] &&
-                            staffs[staff_index]["repair_cost"] === post_and_name[1]
+                            staffs[staff_index]["title"] === post_and_name[0] &&
+                            staffs[staff_index]["name"] === post_and_name[1]
                             ) {
                                 staff_id = staffs[staff_index]["id"];
                                 break;
                         }
                     }
 
+                    console.log({"execution_of_orders_id": execute_order_id, "staff_id": staff_id});
                     // Формат отправляемых данных ['execution_of_orders_id', 'staff_id']
                     await post("/api/add_product", {"execution_of_orders_id": execute_order_id, "staff_id": staff_id}
                     ).then(res =>{
