@@ -29,11 +29,28 @@ def get_types():
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
 
+@types_of_repairs_api.route("/get_type_by_desc", methods=["GET"])
+def get_type_by_desc():
+    data = request.args
+    if 'description' in data:
+        res = dbHandler.execute(f"select * from types_of_repairs where description = '{data['description']}'")
+        if len(res) != 0:
+            return json.dumps({
+                "id": res[0][0],
+                "desc": res[0][1]
+            }), 200, {'Content-Type': 'application/json'}
+        else:
+            return abort(409, TypesOfRepairsAPIErrors.errorOccurred)
+    else:
+        return abort(409, TypesOfRepairsAPIErrors.errorOccurred)
+
+
 @types_of_repairs_api.route("/add_types_of_repairs", methods=["POST"])
 def add_types():
     data = request.json
     if "description" in data:
-        if data['description'].strip() not in unzipOneItem(dbHandler.execute("select description from types_of_repairs")):
+        if data['description'].strip() not in unzipOneItem(
+                dbHandler.execute("select description from types_of_repairs")):
             try:
                 dbHandler.add("types_of_repairs", "description", data['description'].strip())
             except Exception as e:
@@ -51,7 +68,8 @@ def edit_types():
     data = request.json
     if 'id' in data and 'description' in data:
         try:
-            if len(dbHandler.execute(f"select * from types_of_repairs where description = '{data['description'].strip()}'")) == 0:
+            if len(dbHandler.execute(
+                    f"select * from types_of_repairs where description = '{data['description'].strip()}'")) == 0:
                 if len(dbHandler.execute(f"select * from types_of_repairs where id = {data['id']}")) != 0:
                     dbHandler.update("types_of_repairs", "description", data['description'].strip(), data['id'])
                     return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}

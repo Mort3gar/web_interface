@@ -14,7 +14,7 @@ def get_order():
     if 'id' in data:
         if int(data['id']) in unzipOneItem(dbHandler.execute(f"select id from orders")):
             res = dbHandler.execute(
-                f"select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date, product.id from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id where orders.id = {data['id']}")[
+                f"select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date, product_id from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id where orders.id = {data['id']}")[
                 0]
             return json.dumps({
                 "id": res[0],
@@ -31,7 +31,7 @@ def get_order():
     else:
         res = []
         for item in dbHandler.execute(
-                "select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date, product.id from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id"):
+                "select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date, product_id from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id"):
             res.append({
                 "id": item[0],
                 "client_name": item[1],
@@ -40,7 +40,7 @@ def get_order():
                 'model': item[4],
                 'warranty_period': str(item[5]),
                 'order_receipt_date': str(item[6]),
-                "product_id": res[7]
+                "product_id": item[7]
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
