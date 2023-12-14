@@ -60,10 +60,10 @@ def add_client():
 @product_api.route("/edit_product", methods=["PATCH"])
 def edit_client():
     data = request.json
-    if Counter(['id', 'name', 'brands_id', 'model', 'technical_specifications', 'warranty_period']) == Counter(list(data.keys())):
+    if Counter(['id', 'name', 'brands_id', 'model', 'technical_specification', 'warranty_period']) == Counter(list(data.keys())):
         try:
             if len(dbHandler.execute(f"select * from product where id = {data['id']}")) != 0:
-                dbHandler.update("product", ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period'],
+                dbHandler.update("product", ['name', 'brands_id', 'model', 'technical_specifications', 'warranty_period'],
                                  [data['name'], data['brands_id'], data['model'], data['technical_specification'],
                                   data['warranty_period']], data['id'])
                 return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
