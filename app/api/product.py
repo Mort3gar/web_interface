@@ -46,15 +46,13 @@ def get_client():
 def add_client():
     data = request.json
     if Counter(['name', 'brands_id', 'model', 'technical_specification', 'warranty_period']) == Counter(list(data.keys())):
-        if data['title'].strip() not in unzipOneItem(dbHandler.execute("select title from posts")):
-            try:
-                dbHandler.add("posts", "title", data['title'].strip())
-            except Exception as e:
-                print(e)
-                return abort(500, ProductAPIErrors.errorOccurred)
-            return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
-        else:
-            return abort(409, ProductAPIErrors.idErr)
+        try:
+            dbHandler.add("product", ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period'],
+                          [data['name'].strip(), data['brands_id'], data['model'].strip(), data['technical_specification'], data['warranty_period']])
+        except Exception as e:
+            print(e)
+            return abort(500, ProductAPIErrors.errorOccurred)
+        return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
     else:
         return abort(403, ProductAPIErrors.errorOccurred)
 
@@ -65,7 +63,7 @@ def edit_client():
     if Counter(['id', 'name', 'brands_id', 'model', 'technical_specification', 'warranty_period']) == Counter(list(data.keys())):
         try:
             if len(dbHandler.execute(f"select * from product where id = {data['id']}")) != 0:
-                dbHandler.update("clients", ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period'],
+                dbHandler.update("product", ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period'],
                                  [data['name'], data['brands_id'], data['model'], data['technical_specification'],
                                   data['warranty_period']], data['id'])
                 return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
