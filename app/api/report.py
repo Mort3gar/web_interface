@@ -20,12 +20,12 @@ def get_report():
                 "id": item[0],
                 "client_name": item[1],
                 "phoneNumber": item[2],
-                "order_receipt_date": item[3],
-                "order_execution_date": item[4],
+                "order_receipt_date": str(item[3]),
+                "order_execution_date": str(item[4]),
                 "product_name": item[5],
                 "brand_name": item[6],
                 "model": item[7],
-                "warranty_period": item[8]
+                "warranty_period": str(item[8])
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
     else:
