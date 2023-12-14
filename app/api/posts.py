@@ -53,7 +53,7 @@ def edit_client():
         try:
             if len(dbHandler.execute(f"select * from posts where id = {data['id']}")) != 0 \
                     and data['title'].strip() not in unzipOneItem(dbHandler.execute("select title from posts")):
-                dbHandler.update("clients", "name", data['name'], data['id'])
+                dbHandler.update("posts", "title", data['title'], data['id'])
                 return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
             else:
                 return abort(409, PostsAPIErrors.idErr)
