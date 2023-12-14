@@ -220,6 +220,9 @@
                     }
                 }
 
+                console.log({"name": data["product_name"], "brands_id": brand_id, "model":data["model_name"],
+                    "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]})
+
                 // Формат отправляемых данных ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period']
                 await post("/api/add_product", {"name": data["product_name"], "brands_id": brand_id, "model":data["model_name"],
                     "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]}
@@ -272,6 +275,9 @@
                         break;
                     }
                 }
+
+                console.log({"clients_id": client_id, "product_id": product_id,
+                    "order_receipt_date": data["date_order_acceptance"]})
 
                 // Формат отправляемых данных ['clients_id', 'product_id', 'order_receipt_date']
                 await post("/api/add_order", {"clients_id": client_id, "product_id": product_id,

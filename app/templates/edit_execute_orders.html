@@ -5,35 +5,43 @@
         <div class="container mt-5">
             <div class="border border-dark rounded p-3 m-5">
                 <form id="form_execute_order">
-                    <legend class="mb-3">Исполнить заказ</legend>
+                    <legend class="mb-3"></legend>
                     <div class="mb-3">
                         <label for="order_id" class="form-label">Номер заказа</label>
                         <input type="number" id="order_id" class="form-control" placeholder="Введите номер заказа:" required>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="executer" class="form-label">Исполнитель</label>
+                        <select name="choice_select_executer" id="executer">
+                            <!-- Здесь будут данные из БД -->
+                        </select>
+                        
                     </div>
 
                     <div class="mb-3">
                         <label for="type_repair" class="form-label">Тип ремонта</label>
                         <input type="text" id="type_repair" class="form-control" placeholder="Введите тип ремонта:" required>
                     </div>
-
+    
                     <div class="mb-3">
                         <label for="repair_cost" class="form-label">Стоимость ремонта</label>
                         <input type="number" id="repair_cost" class="form-control" placeholder="Введите стоимость ремонта:" min="0" required>
                     </div>
-
+    
                     <div class="mb-3">
                         <label for="date_execute" class="form-label">Дата исполнения заказа</label>
                         <input type="date" id="date_execute" class="form-control" placeholder="дата исполнения" required>
                     </div>
-
+    
                     <div class="mb-3">
                         <label for="choice_select" class="form-label">Сообщение о проделанной работе</label>
                         <select name="choice_message" id="choice_select">
-                            <option value="choice_yes">Да</option>
-                            <option value="choice_no">Нет</option>
+                            <option value="choice_yes">Задача выполнена</option>
+                            <option value="choice_no">Задача не выполнена</option>
                         </select>
                     </div>
-
+    
                     <div class="mb-3">
                         <label for="receipt_date" class="form-label">Дата получения товара</label>
                         <input type="date" id="receipt_date" class="form-control" placeholder="дата получения товара">
@@ -61,38 +69,36 @@
         // "title": res[2]
 
         function set_data_in_form(data){
-            document.getElementById("staff_name").value = data["name"];
-            document.getElementById("choice_post").selectedIndex = data["index"]
+            document.getElementById("order_id").value = data["id_order"];
+            document.getElementById("type_repair").value = data["id_order"];
+            document.getElementById("repair_cost").value = data["id_order"];
+            document.getElementById("date_execute").value = data["id_order"];
+            document.getElementById("choice_message").selectedIndex = data["type_of_repair"]
+            document.getElementById("receipt_date").value = data["id_order"];
 
         }
 
         
         async function addDataInSelect(choice_id){
             let index_counter;
-            let staffs;
+            let order;
             let current_staff;
 
             // считываем query параметр
             const urlSearchParams = new URLSearchParams(window.location.search);
             const params = Object.fromEntries(urlSearchParams.entries());
-            let staff_id = params["id"]
-            console.log(staff_id)
+            let order_id = params["id"]
+            console.log(order_id)
 
             // "id": res[0],
             // "name": res[1],
             // "title": res[2]
-            await get("/api/get_staff").then(res =>{
-                staffs = res
+            await get(`/api/get_order?=${order_id}`).then(res =>{
+                order = res
             }).catch(error =>{
                 console.log(error)
             })
 
-            // Бежим по индексам сотрудников, ищем нужного
-            for (let staff_index in staffs) {
-                if (Number(staffs[staff_index]["id"]) === Number(staff_id)) {
-                    current_staff = staffs[staff_index]
-                }
-            }
 
 
             // Формат получаемых данных [id, title]
@@ -104,7 +110,7 @@
                 for (let index_data in data) {
 
                     // Айдишник нужного поста для селекта
-                    if (current_staff["title"] === data[index_data]["title"]) {
+                    if (current_staff["title"] === data[index_data]["warranty_period"]) {
                         index_counter = index_data;
                     }
                     // -----
@@ -224,7 +230,7 @@
                 console.log({"id": params["id"], "name": data["name"], "posts_id": post_id});
 
                 // Формат отправляемых данных ['id', 'name', 'posts_id']
-                await patch("/api/add_staff", {"id": Number(params["id"]), "name": data["name"], "posts_id": post_id}).then(res =>{
+                await patch("/api/edit_staff", {"id": Number(params["id"]), "name": data["name"], "posts_id": post_id}).then(res =>{
                     console.log(res)
                 }).catch(error => {
                     console.log(error)

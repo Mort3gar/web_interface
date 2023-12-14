@@ -226,7 +226,7 @@
                 console.log({"id": params["id"], "name": data["name"], "posts_id": post_id});
 
                 // Формат отправляемых данных ['id', 'name', 'posts_id']
-                await patch("/api/add_staff", {"id": Number(params["id"]), "name": data["name"], "posts_id": post_id}).then(res =>{
+                await patch("/api/edit_staff", {"id": Number(params["id"]), "name": data["name"], "posts_id": post_id}).then(res =>{
                     console.log(res)
                 }).catch(error => {
                     console.log(error)
