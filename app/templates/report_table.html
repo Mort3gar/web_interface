@@ -1,117 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container pt-3">
     <div class="container mt-5">
-        <div class="container mt-2">
-            <h3 class="text-center" id="table_title">
-                Сведения об исполненных заказах по гарантийному ремонту бытовой техники<br>
-                За такой-то месяц такого-то года
-            </h3>
+        <div class="border border-dark rounded p-3 m-5">
+            <form id="form_add_staff">
+                <legend class="mb-3">Введите дату</legend>
+                <div class="mb-3">
+                    <label for="staff_name" class="form-label">Месяц (число от 1 до 12)</label>
+                    <input type="text" id="staff_name" class="form-control" placeholder="Введите месяц:" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="choice_post" class="form-label">Год</label>
+                    <input type="text" id="choice_post" class="form-control" placeholder="Введите год:" required>
+                </div>
+
+                <div>
+                    <input type="button" value="Создать" class="btn btn-dark" onclick="createReportTable()">
+                </div>
+            </form>            
         </div>
-        
-        <table class="table table-hover" id="table_report">
-            <caption>Записи</caption>
-            <thead>
-            <tr>
-                <th scope="col">#Код заказа</th>
-                <th scope="col">ФИО клента</th>
-                <th scope="col">Телефон клиента</th>
-                <th scope="col">Дата поступления заказа</th>
-                <th scope="col">Дата исполнения заказа</th>
-                <th scope="col">Срок ремонта дней</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Сюда будут вставляться строки с ячейками -->
-            </tbody>
-        </table>
     </div>
+</div>
+{% endblock %}
 
-    {% block scripts_down %}
-        <script type="text/javascript">
-            // Функция гет запроса
-            const get = async (url) => {
-                const response = await axios.get(
-                    url
-                );
-                return await response.data
-            };
-
-            // !!!!Функции для ПОСТА!!!!
-            const post = async (url, dict_) => {
-                    const response = await axios.post(
-                        url, dict_
-                    );
-                    return await response.data
-                }
-
-                async function del_element(param){
-                    // Формат отправляемых данных ['id']
-                    await post("/api/delete_order", {"id": param}).then(res =>{
-                            console.log(res)
-                        }).catch(error => {
-                            console.log(error)
-                        })
-                }
-
-            // "id": item[0],
-            // "client_name": item[1],
-            // "phoneNumber": item[2],
-            // "order_receipt_date": str(item[3]),
-            // "order_execution_date": str(item[4]),
-            // "product_name": item[5],
-            // "brand_name": item[6],
-            // "model": item[7],
-            // "warranty_period": str(item[8])
-            async function addDataInTable(table_id){
-                await get("/api/get_report?month=9&year=2023").then(res =>{
-
-                let data = res
-                let table = document.getElementById(table_id);
-                console.log(data)
-                
-                // Бежим по индексам даты и по ключам, вставляем соответствующие значения в таблицу
-                for (let one_data in data) {
-                // счетчик строк
-                let counter = 0;
-                let new_row;
-                
-                table.insertRow(table.rows.length).innerHTML=`
-                    <td colspan="6" ><b>Наименование товара:</b> ${data[one_data]["product_name"]}</td>
-                `
-
-                table.insertRow(table.rows.length).innerHTML=`
-                    <td colspan="6"><b>Фирма:</b> ${data[one_data]["brand_name"]}</td>
-                `
-
-                table.insertRow(table.rows.length).innerHTML=`
-                    <td colspan="6"><b>Модель:</b> ${data[one_data]["model"]}</td>
-                `
-                let date_1 = new Date(data[one_data]["order_execution_date"])
-                let date_2 = new Date(data[one_data]["order_receipt_date"])
-                let date = date_1 - date_2
-                console.log(date_1, date_2, date)
-
-                table.insertRow(table.rows.length).innerHTML = `
-                <td>${data[one_data]["id"]}</td>
-                <td>${data[one_data]["client_name"]}</td>
-                <td>${data[one_data]["phoneNumber"]}</td>
-                <td>${data[one_data]["order_receipt_date"]}</td>
-                <td>${data[one_data]["order_execution_date"]}</td>
-                <td>${date/86400000}</td>
-                `
-
-                table.insertRow(table.rows.length).innerHTML=`
-                    <td colspan="6"></td>
-                `
+{% block scripts_down %}
+        <script>
+            function createReportTable(){
+                let month = document.getElementById("staff_name")
+                month = month.value
+                let year = document.getElementById("choice_post")
+                year = year.value
+                window.location = `/report_table?month=${month}&year=${year}`;
             }
-            }).catch(error =>{
-                console.log(error)
-            })
-            }
-            // Отработка функции при загрузке окна
-            window.onload = addDataInTable("table_report");
         </script>
     {% endblock %}
-
-{% endblock %}
