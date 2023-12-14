@@ -65,62 +65,221 @@
         </div>
     </div>
     {% block scripts_down %}
-        <script type="text/javascript">
+    <script type="text/javascript">
+        // Функции для ГЕТА
+            const get = async (url) => {
+                const response = await axios.get(
+                    url
+                );
+                return await response.data
+            };
 
-            // const get = async (url) => {
-            //     const response = await axios.get(
-            //         url
-            //     );
-            //     return await response.data
-            // };
+            // Формат получаемых данных [id, name]
+            async function addDataInSelectBrand(choice_id){
+                await get("/api/get_brands").then(res =>{
 
-            // async function get_staff(){
-            //     await get("/api/get_staff").then(res =>{
-            //     console.log(res)
-            //     return res
-            //   }).catch(error =>{
-            //   console.log(error)
-            //     return null
-            //   })
-            // }
+                let data = res;
 
-            // // Формат получаемых данных [id, name, posts]
-            // async function addDataInTable(f_data, table_id){
-            //     await get("/api/get_staff").then(res =>{
-            //     data = res
-            //     let table = document.getElementById(table_id);
+                let select = document.getElementById(choice_id);
+                
+                // добавление элементов в select
+                for (let index_data in data) {
+                    let opt = document.createElement('option');
+                    opt.value = data[index_data]["id"];
+                    opt.innerHTML = data[index_data]["name"];
+                    select.appendChild(opt);
+                }
 
-            //     for (let one_data in data) {
-            //         //console.log(data)
-            //         let counter = 0;
-            //         let new_row = table.insertRow(table.rows.length);
-            //         for (let key in data[one_data]) {
-            //             //console.log(key)
-            //             // Вставляем данные в ячейки новой строки
-            //             new_row.insertCell(counter).innerHTML = data[one_data][key];
-            //             counter++;
-            //         }
+                let opt = document.createElement('option');
+                opt.value = "choice_not_in_list";
+                opt.innerHTML = "Отсутствует в списке";
+                select.appendChild(opt);
 
-            //         // Вставляем данные в ячейки новой строки
-            //         new_row.insertCell(counter).innerHTML = `
-            //             <div class="btn-group">
-            //                 <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            //                     Действие
-            //                 </button>
-            //                 <ul class="dropdown-menu">
-            //                     <li><a class="dropdown-item" href="#">Изменить</a></li>
-            //                     <li><hr class="dropdown-divider"></li>
-            //                     <li><a class="dropdown-item" href="#">Удалить</a></li>
-            //                 </ul>
-            //             </div>
-            //         `
-            //     }
-            //   }).catch(error =>{
-            //   console.log(error)
-            //     return null
-            //   })
-            // }
-            // window.onload = addDataInTable(get_staff, "table_orders");
+              }).catch(error =>{
+                console.log(error)
+              })
+            }
+
+            // Выполнить функцию выше при загрузке страницы
+            window.onload = addDataInSelectBrand("choice_brand");
+
+        // Функции для ПОСТА
+        const post = async (url, dict_) => {
+            const response = await axios.post(
+                url, dict_
+            );
+            return await response.data
+        }
+
+        function clearInputs() {
+        // Очистить поля ввода
+        document.getElementById("product_name").value = "";
+        document.getElementById("brand_name").value = "";
+        document.getElementById("model_name").value = "";
+        document.getElementById("text_specification").value = "";
+        document.getElementById("client_name").value = "";
+        document.getElementById("telephone_number").value = "";
+        }
+
+        // Получаем данные из формы
+        function get_data_from_input(){
+            let product_name = $("#product_name").val();
+            let brand_name;
+            let model_name = $("#model_name").val();
+            let text_specification = $("#text_specification").val();
+            let warranty_date = $("#garantity_period").val();
+            let client_name = $("#client_name").val();
+            let telephone_number = $("#telephone_number").val();
+            let date_order_acceptance = $("#date_order_acceptance").val();
+
+            let choice = $("#choice_brand").val();
+
+            if (choice !== "choice_not_in_list"){
+                brand_name = $("#choice_brand :selected").text();
+            }
+            else{
+                brand_name = $("#brand_name").val();
+            }
+
+            //console.log(name, brand_name)
+
+            return {"product_name": product_name, "brand_name": brand_name, "model_name": model_name, "text_specification": text_specification, 
+            "warranty_date": warranty_date, "client_name": client_name, "telephone_number": telephone_number, "date_order_acceptance": date_order_acceptance}
+        }
+
+        async function add_order_in_db(){
+            // !!!!Функции для ПАТЧА!!!!
+            const patch = async (url, dict_) => {
+            const response = await axios.patch(
+                url, dict_
+            );
+            return await response.data
+        }
+
+            let data = get_data_from_input();
+
+            //console.log(data)
+
+            // флаг наличия пустых полей в форме
+            let flag_empty = false;
+
+            // если есть пусты поля(в том числе не выбранные даты) flag_empty=true
+            for (let key in data){
+                if (data[key] === "") {
+                    flag_empty = true;
+                    break;
+                }
+            }
+
+            if (!flag_empty) {
+
+                const urlSearchParams = new URLSearchParams(window.location.search);
+                const params = Object.fromEntries(urlSearchParams.entries());
+
+                // Формат отправляемых данных [name]
+                await post("/api/add_client", {"name": data["client_name"], "phoneNumber": data["telephone_number"]}).then(res =>{
+                    console.log(res)
+                }).catch(error => {
+                    console.log(error)
+                })
+
+                // Формат отправляемых данных [brand_name]
+                await post("/api/add_brand", {"brand_name": data["brand_name"]}).then(res =>{
+                    console.log(res)
+                }).catch(error => {
+                    console.log(error)
+                })
+
+                // данные таблицы брэнды из БД и id нужного
+                let data_brands;
+                let brand_id;
+
+                // Формат получаемых данных [id, name]
+                await get("/api/get_brands").then(res =>{
+                    data_brands = res.reverse();
+                }).catch(error =>{
+                    console.log(error)
+                })
+
+                for (let brand_index in data_brands) {
+                    if (data_brands[brand_index]["name"] === data["brand_name"]) {
+                        brand_id = data_brands[brand_index]["id"];
+                        break;
+                    }
+                }
+
+                // данные таблицы продукт из БД и id нужного
+                let products;
+                let product_id;
+                
+                // Формат получаемых данных [id, name, brand_name, model, technical_specifications, warranty_period]
+                await get("/api/get_product").then(res =>{
+                    products = res.reverse();
+                }).catch(error =>{
+                    console.log(error)
+                })
+
+                
+                // Поиск id добавленного продукта
+                for (let product_index in products) {
+                    console.log(products[product_index], data)
+                    if (
+                        products[product_index]["name"] === data["product_name"] && 
+                        products[product_index]["brand_name"] === data["brand_name"] &&
+                        products[product_index]["model"] === data["model_name"] &&
+                        products[product_index]["technical_specifications"] === data["text_specification"] &&
+                        products[product_index]["warranty_period"] === data["warranty_date"]
+                        ) {
+                            product_id = products[product_index]["id"];
+                            break;
+                    }
+                }
+                // console.log(current_order);
+                // Формат отправляемых данных ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period']
+                await patch("/api/edit_product", {"id": product_id,"name": data["product_name"], "brands_id": brand_id, "model":data["model_name"],
+                    "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]}
+                ).then(res =>{
+                    console.log(res)
+                }).catch(error => {
+                    console.log(error)
+                })
+
+                // данные таблицы продукт из БД и id нужного
+                let clients;
+                let client_id;
+                
+                // Формат получаемых данных [id, name]
+                await get("/api/get_client").then(res =>{
+                    clients = res.reverse();
+                }).catch(error =>{
+                    console.log(error)
+                })
+
+                // Поиск id добавленного продукта
+                for (let client_index in clients) {
+                    if (clients[client_index]["name"] === data["client_name"]) {
+                        client_id = clients[client_index]["id"];
+                        break;
+                    }
+                }
+
+                console.log({"clients_id": client_id, "product_id": product_id,
+                    "order_receipt_date": data["date_order_acceptance"]})
+
+                // Формат отправляемых данных ['clients_id', 'product_id', 'order_receipt_date']
+                await patch("/api/edit_order", {"clients_id": client_id, "product_id": product_id,
+                    "order_receipt_date": data["date_order_acceptance"]}).then(res =>{
+                    console.log(res)
+                }).catch(error => {
+                    console.log(error)
+                })
+            }
+            else{
+                // info
+                console.log("Не все поля заполнены!");
+            }
+        }
+
         </script>
     {% endblock %}
     {% endblock %}
