@@ -22,7 +22,7 @@ def get_client():
                 "brand_name": res[2],
                 "model": res[3],
                 "technical_specifications": res[4],
-                "warranty_period": res[5]
+                "warranty_period": str(res[5])
             }), 200, {'Content-Type': 'application/json'}
         else:
             return abort(409, ProductAPIErrors.idErr)
@@ -30,14 +30,14 @@ def get_client():
         res = []
         for item in dbHandler.execute(f"select product.id, name, brand_name, model, technical_specifications, "
                                       f"warranty_period from product left join brands on brands_id = brand"
-                                      f"s.id where product.id = {data['id']}"):
+                                      f"s.id"):
             res.append({
                 "id": item[0],
                 "name": item[1],
                 "brand_name": item[2],
                 "model": item[3],
                 "technical_specifications": item[4],
-                "warranty_period": item[5]
+                "warranty_period": str(item[5])
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
