@@ -62,3 +62,7 @@ def edit_execute_orders():
 @app.route("/edit_staff", methods=['GET'])
 def edit_staff():
     return render_template("edit_staff.html")
+
+@app.route("/report_table", methods=['GET'])
+def report_table():
+    return render_template("report_table.html")
