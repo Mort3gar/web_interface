@@ -62,6 +62,7 @@ def add_execution():
                           [data['order_id'], data['types_of_repairs_id'], data['repair_cost'],
                            data['order_execution_date'], data['message'], data['date_of_receipt'],
                            data['amount_of_payment']])
+            return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
         except Exception as e:
             print(e)
             return abort(500, ExecutionOfOrdersAPIErrors.errorOccurred)
@@ -89,6 +90,7 @@ def edit_execution():
                               data['order_execution_date'], data['message'], data['date_of_receipt'],
                               data['amount_of_payment']],
                              data['id'])
+            return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
         except ValueError as e:
             print(e)
             return abort(409, ExecutionOfOrdersAPIErrors.colValLenErr)
