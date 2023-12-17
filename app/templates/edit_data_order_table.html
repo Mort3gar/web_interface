@@ -219,6 +219,22 @@
                     console.log(error)
                 })
 
+
+                function findIndex(products, data) {
+                    for (let product of products) {
+                        console.log(product, data)
+                        if (
+                            product["name"] === data["product_name"] && 
+                            product["brand_name"] === data["brand_name"] &&
+                            product["model"] === data["model_name"] &&
+                            product["technical_specifications"] === data["text_specification"] &&
+                            product["warranty_period"] === data["warranty_date"]
+                            ) {
+                                product_id = product["id"];
+                                break;
+                        }
+                    }
+                }
                 
                 // Поиск id добавленного продукта
                 for (let product_index in products) {
@@ -235,7 +251,7 @@
                     }
                 }
                 // console.log(current_order);
-                // Формат отправляемых данных ['name', 'brands_id', 'model', 'technical_specification', 'warranty_period']
+                // Формат отправляемых данных ['id', 'name', 'brands_id', 'model', 'technical_specification', 'warranty_period']
                 await patch("/api/edit_product", {"id": product_id,"name": data["product_name"], "brands_id": brand_id, "model":data["model_name"],
                     "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]}
                 ).then(res =>{
