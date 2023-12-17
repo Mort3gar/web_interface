@@ -20,97 +20,15 @@
             </tr>
           </thead>
           <tbody>
+
             <!-- Сюда будут вставляться строки с ячейками -->
+
           </tbody>
         </table>
   </div>
+{% endblock %}
 
-  {% block scripts_down %}
-    <script type="text/javascript">
-        // Функция гет запроса
-        const get = async (url) => {
-            const response = await axios.get(
-                url
-            );
-            return await response.data
-        };
-
-        // !!!!Функции для ПОСТА!!!!
-        const post = async (url, dict_) => {
-                const response = await axios.post(
-                    url, dict_
-                );
-                return await response.data
-            }
-
-            async function del_element(param){
-                // Формат отправляемых данных ['id']
-                await post("/api/delete_order", {"id": param}).then(res =>{
-                        console.log(res)
-                    }).catch(error => {
-                        console.log(error)
-                    })
-            }
-
-        // Формат получаемых данных [id, client_name, product_name, brand, model, warranty_period, order_receipt_date]
-        async function addDataInTable(table_id){
-            await get("/api/get_order").then(res =>{
-
-            let data = res
-            let table = document.getElementById(table_id);
-            //console.log(data)
-            
-            // Бежим по индексам даты и по ключам, вставляем соответствующие значения в таблицу
-            for (let one_data in data) {
-              // счетчик строк
-              let counter = 0;
-              let new_row = table.insertRow(table.rows.length);
-
-              for (let key in data[one_data]) {
-
-                  // Проверка на наличие гарнатийного периода
-                  if (key === "warranty_period") {
-                    let garanthy;
-                    let warranty_date = new Date((data[one_data][key]));
-                    let order_receipt_date = new Date(data[one_data]["order_receipt_date"]);
-                    console.log(warranty_date.getTime(), order_receipt_date.getTime())
-                    if (warranty_date.getTime() < order_receipt_date.getTime()) { 
-                      garanthy = "Нет" 
-                    }
-                    else{ garanthy = "Да" }
-
-                    // Вставляем наличие проверенной гарантии
-                    new_row.insertCell(counter).innerHTML = garanthy;
-                    counter++
-                    continue;
-                  }
-
-                  // Вставляем данные в ячейки новой строки
-                  new_row.insertCell(counter).innerHTML = data[one_data][key];
-                  counter++;
-                }
-
-                // Вставляем данные в ячейки новой строки
-                new_row.insertCell(counter).innerHTML = `
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Действие
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="edit_data_order_table?id=${data[one_data]["id"]}">Изменить</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" onclick="del_element(${data[one_data]["id"]})">Удалить</a></li>
-                        </ul>
-                    </div>
-                `
-            }
-
-          }).catch(error =>{
-            console.log(error)
-          })
-        }
-        // Отработка функции при загрузке окна
-        window.onload = addDataInTable("table_orders");
-    </script>
-  {% endblock %}
+{% block scripts_down %}
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts/table_data.js') }}"></script>
 {% endblock %}

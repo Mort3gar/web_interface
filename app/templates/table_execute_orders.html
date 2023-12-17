@@ -27,75 +27,9 @@
             </tbody>
         </table>
     </div>
+{% endblock %}
 
-    {% block scripts_down %}
-        <script type="text/javascript" src="{{ url_for('static', filename='util.js') }}"></script>
-        <script type="text/javascript">
-            async function del_element(id){
-                // Формат отправляемых данных ['id']
-                post("/api/delete_execution", { id }).then(res =>{
-                    console.log(res)
-                }).catch(error => {
-                    console.log(error)
-                })
-            }
-
-            // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, order_execution_date, message, date_of_receipt, order_receipt_date]
-            function addDataInTable(table_id){
-                get("/api/get_execution").then(data => {
-                    let table = document.getElementById(table_id);
-
-                    console.log(data)
-
-                    // Список ожидаемых прилетающих ключей
-                    let list_tag = ["id", "client_name", "repair_type", "repair_cost", "order_execution_date", "message", "date_of_receipt"]
-
-                     // Бежим по индексам даты и по ключам из list_tag, вставляем соответствующие значения в таблицу
-                    for (let item of data) {
-                        //console.log(data)
-                        let new_row = table.insertRow(table.rows.length);
-                        
-                        let funny_data = { ...item };
-                        funny_data.message = item.message === 1 ? "Работа успешно выполнена" : "Случились технические шоколадки"
-
-                        for (let tag of list_tag) {   
-                            new_row.insertCell().innerHTML = funny_data[tag];
-                        }
-
-                        // Проверка на наличие гарантии
-                        let warranty_date = new Date((item["warranty_period"]));
-                        let order_receipt_date = new Date(item["order_receipt_date"]);
-
-                        console.log(warranty_date.getTime(), order_receipt_date.getTime());
-
-                        if (warranty_date.getTime() < order_receipt_date.getTime()) {
-                            garanthy = item["repair_cost"]
-                        } else{garanthy = 0;}
-
-                        // Вставляем наличие проверенной гарантии
-                        new_row.insertCell().innerHTML = garanthy;
-
-                        // Вставляем данные в ячейки новой строки
-                        new_row.insertCell().innerHTML = `
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Действие
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="edit_execute_orders?id=${item["id"]}">Изменить</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" onclick="del_element(${item["id"]})">Удалить</a></li>
-                                </ul>
-                            </div>
-                        `
-                    }
-                }).catch(error =>{
-                    console.log(error)
-              })
-            }
-
-            // Отработка функции при загрузке окна
-            window.onload = addDataInTable("table_execute_orders");
-        </script>
-    {% endblock %}
+{% block scripts_down %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/table_execute_orders.js') }}"></script>
 {% endblock %}

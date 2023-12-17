@@ -13,13 +13,15 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Сюда будут вставляться строки с ячейками -->
+
+                <!-- Сюда будут вставляться строки с ячейками -->
+
             </tbody>
         </table>
     </div>
 {% endblock %}
 
-
 {% block scripts_down %}
-<script type="text/javascript" src="{{ url_for('static', filename='table_stuff.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>  
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/table_stuff.js') }}"></script>
 {% endblock %}
