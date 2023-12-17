@@ -14,7 +14,7 @@ def get_execution():
     if "id" in data:
         if len(dbHandler.execute(f"select * from execution_of_orders where id = {data['id']}")) != 0:
             res = dbHandler.execute(
-                f"select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id where execution_of_orders.id = {data['id']}")
+                f"select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date, orders.id from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id where execution_of_orders.id = {data['id']}")[0]
             print(res)
             return json.dumps({
                 "id": res[0],
@@ -25,14 +25,15 @@ def get_execution():
                 "order_execution_date": str(res[5]),
                 "message": res[6],
                 "date_of_receipt": str(res[7]),
-                "order_receipt_date": str(res[8])
+                "order_receipt_date": str(res[8]),
+                "order_id": res[9]
             }), 200, {'Content-Type': 'application/json'}
         else:
             return abort(409, ExecutionOfOrdersAPIErrors.idErr)
     else:
         res = []
         for item in dbHandler.execute(
-                "select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id"):
+                "select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date, orders.id from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id"):
             res.append({
                 "id": item[0],
                 "client_name": item[1],
@@ -42,7 +43,8 @@ def get_execution():
                 "order_execution_date": str(item[5]),
                 "message": item[6],
                 "date_of_receipt": str(item[7]),
-                "order_receipt_date": str(item[8])
+                "order_receipt_date": str(item[8]),
+                "order_id": item[9]
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
@@ -75,8 +77,7 @@ def add_execution():
 def edit_execution():
     data = request.json
     if Counter(['id', 'order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message',
-                'date_of_receipt',
-                'amount_of_payment']) == Counter(list(data.keys())):
+                'date_of_receipt']) == Counter(list(data.keys())):
         if len(dbHandler.execute(f"select * from orders where id = {data['order_id']}")) == 0:
             return abort(409, OrdersAPIErrors.idErr)
         if len(dbHandler.execute(f"select * from types_of_repairs where id = {data['types_of_repairs_id']}")) == 0:
@@ -85,11 +86,9 @@ def edit_execution():
             return abort(409, ExecutionOfOrdersAPIErrors.idErr)
         try:
             dbHandler.update("execution_of_orders",
-                             ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date' 'message',
-                              'date_of_receipt', 'amount_of_payment'],
+                             ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message', 'date_of_receipt'],
                              [data['order_id'], data['types_of_repairs_id'], data['repair_cost'],
-                              data['order_execution_date'], data['message'], data['date_of_receipt'],
-                              data['amount_of_payment']],
+                              data['order_execution_date'], data['message'], data['date_of_receipt']],
                              data['id'])
             return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
         except ValueError as e:

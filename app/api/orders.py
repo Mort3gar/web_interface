@@ -14,7 +14,7 @@ def get_order():
     if 'id' in data:
         if int(data['id']) in unzipOneItem(dbHandler.execute(f"select id from orders")):
             res = dbHandler.execute(
-                f"select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date, product_id from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id where orders.id = {data['id']}")[
+                f"select orders.id, clients.name, product.name, brand_name, model, warranty_period, order_receipt_date, product.id from orders left join clients on clients_id = clients.id left join product on product_id = product.id left join brands on brands_id = brands.id where orders.id = {data['id']}")[
                 0]
             return json.dumps({
                 "id": res[0],

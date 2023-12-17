@@ -73,11 +73,11 @@ class DataBaseHandler:
             self.__loadData()
 
     def __loadSchema(self):
-        with open("sql_schema.json", "r", encoding="utf-8") as file:
+        with open("app/sql_schema.json", "r", encoding="utf-8") as file:
             self.__executeQuery(json.load(file)['schema_dump'])
 
     def __loadData(self):
-        with open("sql_schema.json", "r", encoding="utf-8") as file:
+        with open("app/sql_schema.json", "r", encoding="utf-8") as file:
             self.__executeQuery(json.load(file)['data_dump'])
 
     def test(self):

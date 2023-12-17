@@ -20,5 +20,5 @@ class TestingConfig(Config):
     TESTING = True
 
 
-DB_PASSWORD = ""
-DB_NAME = "evm"
+DB_PASSWORD = "2364855112"
+DB_NAME = "evm_lab"

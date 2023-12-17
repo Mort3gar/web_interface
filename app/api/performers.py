@@ -47,6 +47,22 @@ def get_performers():
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
+@performers_api.route("/get_performer_by_execution", methods=["GET"])
+def get_performer_by_execution():
+    data = request.args
+    if "id" in data:
+        res = dbHandler.execute(f"select * from performers where execution_of_orders_id = {data['id']}")
+        if len(res) != 0:
+            return json.dumps({
+                "id": res[0][0],
+                "execution_of_orders_id": res[0][1],
+                "staff_id": res[0][2]
+            }), 200, {'Content-Type': 'application/json'}
+        else:
+            return abort(409, PerformersAPIErrors.errorOccurred)
+    else:
+        return abort(409, PerformersAPIErrors.errorOccurred)
+
 
 @performers_api.route("/add_performer", methods=["POST"])
 def add_performer():

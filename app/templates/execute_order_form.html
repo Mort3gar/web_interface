@@ -57,8 +57,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
-    {% block scripts_down %}
+{% block scripts_down %}
         <script type="text/javascript">
              // Функции для ГЕТА
             const get = async (url) => {
@@ -303,7 +304,7 @@
 
                     console.log({"execution_of_orders_id": execute_order_id, "staff_id": staff_id});
                     // Формат отправляемых данных ['execution_of_orders_id', 'staff_id']
-                    await post("/api/add_product", {"execution_of_orders_id": execute_order_id, "staff_id": staff_id}
+                    await post("/api/add_performer", {"execution_of_orders_id": execute_order_id, "staff_id": staff_id}
                     ).then(res =>{
                         console.log(res)
                     }).catch(error => {
@@ -317,4 +318,3 @@
 
         </script>
     {% endblock %}
-{% endblock %}

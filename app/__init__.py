@@ -12,7 +12,7 @@ from app.api.staff import staff_api
 from app.api.types_of_repairs import types_of_repairs_api
 from app.api.report import report_api
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 from app import routes
 dbHandler = DataBaseHandler(DB_NAME, DB_PASSWORD)

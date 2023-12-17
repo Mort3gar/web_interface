@@ -15,7 +15,7 @@ def get_report():
     if Counter(['month', 'year']) == Counter(list(data.keys())):
         res = []
         for item in dbHandler.execute(
-                f"select order_id, clients.name, clients.phoneNumber, order_receipt_date, order_execution_date, product.name, brands.brand_name, product.model, product.warranty_period from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join brands on product.brands_id = brands.id where month(order_execution_date) = {data['month']} and year(order_execution_date) = {data['year']}"):
+                f"select order_id, clients.name, clients.phoneNumber, order_receipt_date, order_execution_date, product.name, brands.brand_name, product.model, product.warranty_period from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join brands on product.brands_id = brands.id where month(order_execution_date) = {data['month']} and year(order_execution_date) = {data['year']} order by product.model"):
             res.append({
                 "id": item[0],
                 "client_name": item[1],
