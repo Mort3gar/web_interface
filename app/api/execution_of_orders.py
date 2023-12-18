@@ -14,7 +14,8 @@ def get_execution():
     if "id" in data:
         if len(dbHandler.execute(f"select * from execution_of_orders where id = {data['id']}")) != 0:
             res = dbHandler.execute(
-                f"select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date, orders.id from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id where execution_of_orders.id = {data['id']}")[0]
+                f"select execution_of_orders.id, clients.name, product.warranty_period, types_of_repairs.description, repair_cost, order_execution_date, message, date_of_receipt, orders.order_receipt_date, orders.id from execution_of_orders left join orders on order_id = orders.id left join clients on orders.clients_id = clients.id left join product on orders.product_id = product.id left join types_of_repairs on execution_of_orders.types_of_repairs_id = types_of_repairs.id where execution_of_orders.id = {data['id']}")[
+                0]
             print(res)
             return json.dumps({
                 "id": res[0],
@@ -86,7 +87,8 @@ def edit_execution():
             return abort(409, ExecutionOfOrdersAPIErrors.idErr)
         try:
             dbHandler.update("execution_of_orders",
-                             ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message', 'date_of_receipt'],
+                             ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date', 'message',
+                              'date_of_receipt'],
                              [data['order_id'], data['types_of_repairs_id'], data['repair_cost'],
                               data['order_execution_date'], data['message'], data['date_of_receipt']],
                              data['id'])

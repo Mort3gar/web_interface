@@ -15,6 +15,7 @@ from app.api.report import report_api
 app = Flask(__name__, static_folder="static")
 
 from app import routes
+
 dbHandler = DataBaseHandler(DB_NAME, DB_PASSWORD)
 dbHandler.loadDump()
 

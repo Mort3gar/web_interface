@@ -13,7 +13,9 @@ def get_staff():
     data = request.args
     if "id" in data:
         if int(data['id']) in unzipOneItem(dbHandler.execute(f"select id from staff")):
-            res = dbHandler.execute(f"select staff.id, name, title from staff left join posts on posts_id = posts.id where staff.id = {data['id']}")[0]
+            res = dbHandler.execute(
+                f"select staff.id, name, title from staff left join posts on posts_id = posts.id where staff.id = {data['id']}")[
+                0]
             return json.dumps({
                 "id": res[0],
                 "name": res[1],

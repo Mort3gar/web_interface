@@ -1,4 +1,4 @@
-function addDataInTable(table_id){
+function addDataInTable(table_id) {
     // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, 
     // order_execution_date, message, date_of_receipt, order_receipt_date]
     get("/api/get_execution").then(data => {
@@ -8,11 +8,11 @@ function addDataInTable(table_id){
         let list_tag = ["order_id", "client_name", "repair_type",
             "repair_cost", "order_execution_date", "message", "date_of_receipt"];
 
-         // Бежим по индексам даты и по ключам из list_tag, вставляем соответствующие значения в таблицу
+        // Бежим по индексам даты и по ключам из list_tag, вставляем соответствующие значения в таблицу
         for (let item of data) {
             let new_row = table.insertRow(table.rows.length);
 
-            let funny_data = { ...item };
+            let funny_data = {...item};
             funny_data.message = item.message === 1 ? "Работа успешно выполнена" : "Не удалось починить";
 
             for (let tag of list_tag) {
@@ -39,7 +39,7 @@ function addDataInTable(table_id){
                 </div>
             `;
         }
-    }).catch(error =>{
+    }).catch(error => {
         console.log(error);
     })
 }

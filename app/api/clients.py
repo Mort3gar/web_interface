@@ -56,7 +56,8 @@ def edit_client():
     if 'id' in data and 'name' in data and 'phoneNumber' in data:
         try:
             if len(dbHandler.execute(f"select * from clients where id = {data['id']}")) != 0:
-                dbHandler.update("clients", ["name", 'phoneNumber'], [data['name'].strip(), data['phoneNumber'].strip()], data['id'])
+                dbHandler.update("clients", ["name", 'phoneNumber'],
+                                 [data['name'].strip(), data['phoneNumber'].strip()], data['id'])
                 return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
             else:
                 return abort(409, ClientsAPIErrors.idErr)

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block scripts %}
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>  
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -21,13 +21,14 @@
                         </select>
                     </div>
                     <div id="hide_div" class="mb-3">
-                        <input type="text" id="posts_name" class="form-control" placeholder="Введите название должности:">
+                        <input type="text" id="posts_name" class="form-control"
+                               placeholder="Введите название должности:">
                     </div>
 
                     <div>
                         <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_staff_in_db()">
                     </div>
-                </form>            
+                </form>
             </div>
         </div>
     </div>

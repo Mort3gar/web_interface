@@ -1,33 +1,33 @@
-function addDataInTable(table_id){
+function addDataInTable(table_id) {
     // Формат получаемых данных [id, client_name, product_name, brand, model, warranty_period, order_receipt_date]
-    get("/api/get_order").then(data =>{
-    let table = document.getElementById(table_id);
-    let list_tag = ["id", "client_name", "product_name",
+    get("/api/get_order").then(data => {
+        let table = document.getElementById(table_id);
+        let list_tag = ["id", "client_name", "product_name",
             "brand", "model", "warranty_period", "order_receipt_date"];
 
-    // Бежим по данным из даты, вставляем соответствующие значения в таблицу
-    for (let item of data) {
-        let new_row = table.insertRow(table.rows.length);
+        // Бежим по данным из даты, вставляем соответствующие значения в таблицу
+        for (let item of data) {
+            let new_row = table.insertRow(table.rows.length);
 
-        for (let key of list_tag) {
+            for (let key of list_tag) {
 
-            // Проверка на наличие гарнатийного периода
-            if (key === "warranty_period") {
+                // Проверка на наличие гарнатийного периода
+                if (key === "warranty_period") {
 
-            let warranty_date = new Date((item[key]));
-            let order_receipt_date = new Date(item["order_receipt_date"]);
+                    let warranty_date = new Date((item[key]));
+                    let order_receipt_date = new Date(item["order_receipt_date"]);
 
-            // наличие гарантии
-            new_row.insertCell().innerHTML = warranty_date.getTime() < order_receipt_date.getTime() ? "Нет" : "Да";
-            continue;
+                    // наличие гарантии
+                    new_row.insertCell().innerHTML = warranty_date.getTime() < order_receipt_date.getTime() ? "Нет" : "Да";
+                    continue;
+                }
+
+                // Вставляем данные в ячейки новой строки
+                new_row.insertCell().innerHTML = item[key];
             }
 
-            // Вставляем данные в ячейки новой строки
-            new_row.insertCell().innerHTML = item[key];
-        }
-
-        // Вставляем кнопки в ячейки
-        new_row.insertCell().innerHTML = `
+            // Вставляем кнопки в ячейки
+            new_row.insertCell().innerHTML = `
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     Действие
@@ -39,8 +39,8 @@ function addDataInTable(table_id){
                 </ul>
             </div>
         `;
-    }
-    }).catch(error =>{
+        }
+    }).catch(error => {
         console.log(error)
     })
 }

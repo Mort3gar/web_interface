@@ -1,4 +1,4 @@
-function addDataInTable(table_id){
+function addDataInTable(table_id) {
     // Формат получаемых данных [id, name, title(post)]
     get("/api/get_staff").then(data => {
         let table = document.getElementById(table_id);
@@ -25,7 +25,7 @@ function addDataInTable(table_id){
                 </div>
             `;
         }
-    }).catch(error =>{
+    }).catch(error => {
         console.log(error)
     })
 }

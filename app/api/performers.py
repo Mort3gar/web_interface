@@ -47,6 +47,7 @@ def get_performers():
             })
         return json.dumps(res), 200, {'Content-Type': 'application/json'}
 
+
 @performers_api.route("/get_performer_by_execution", methods=["GET"])
 def get_performer_by_execution():
     data = request.args

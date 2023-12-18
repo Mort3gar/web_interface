@@ -54,7 +54,8 @@ class DataBaseHandler:
         return self.__executeQuery(query)
 
     def add(self, table_name, columns, values):
-        self.__executeQuery(f"""insert into {table_name} ({','.join(columns) if type(columns) == list and len(columns) > 1 else columns[0] if type(columns)==list else columns}) values ({','.join([f"'{item}'" if type(item) == str else str(item) for item in values]) if type(values) == list else f"'{values}'" if type(values)==str else str(values) });""")
+        self.__executeQuery(
+            f"""insert into {table_name} ({','.join(columns) if type(columns) == list and len(columns) > 1 else columns[0] if type(columns) == list else columns}) values ({','.join([f"'{item}'" if type(item) == str else str(item) for item in values]) if type(values) == list else f"'{values}'" if type(values) == str else str(values)});""")
 
     def update(self, table_name, columns, values, id):
         if type(columns) != list:
@@ -62,8 +63,10 @@ class DataBaseHandler:
         if type(values) != list:
             values = [values]
         if len(columns) == len(values):
-            print(f"""update {table_name} set {','.join([f"{key}='{item}'" if type(item) == str else f"{key}={item}" for key,item in dict(map(lambda x, y: (x, y), columns, values)).items()])} where id = {id};""")
-            self.__executeQuery(f"""update {table_name} set {','.join([f"{key}='{item}'" if type(item) == str else f"{key}={item}" for key,item in dict(map(lambda x, y: (x, y), columns, values)).items()])} where id = {id};""")
+            print(
+                f"""update {table_name} set {','.join([f"{key}='{item}'" if type(item) == str else f"{key}={item}" for key, item in dict(map(lambda x, y: (x, y), columns, values)).items()])} where id = {id};""")
+            self.__executeQuery(
+                f"""update {table_name} set {','.join([f"{key}='{item}'" if type(item) == str else f"{key}={item}" for key, item in dict(map(lambda x, y: (x, y), columns, values)).items()])} where id = {id};""")
         else:
             raise ValueError(f"columns length ({len(columns)}) != values length ({len(values)})")
 
