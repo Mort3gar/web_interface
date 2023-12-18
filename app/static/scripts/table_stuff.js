@@ -1,12 +1,3 @@
-// async function del_element(id){
-//     // Формат отправляемых данных ['id']
-//     post("/api/delete_staff", { id }).then(res =>{
-//         console.log(res);
-//     }).catch(error => {
-//         console.log(error);
-//     })
-// }
-
 function addDataInTable(table_id){
     // Формат получаемых данных [id, name, title(post)]
     get("/api/get_staff").then(data => {

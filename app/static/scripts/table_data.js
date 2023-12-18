@@ -1,22 +1,15 @@
-// async function del_element(id){
-//     // Формат отправляемых данных ['id']
-//     await post("/api/delete_order", {"id": id}).then(res =>{
-//         console.log(res);
-//     }).catch(error => {
-//         console.log(error);
-//     })
-// }
-
 function addDataInTable(table_id){
     // Формат получаемых данных [id, client_name, product_name, brand, model, warranty_period, order_receipt_date]
     get("/api/get_order").then(data =>{
     let table = document.getElementById(table_id);
+    let list_tag = ["id", "client_name", "product_name",
+            "brand", "model", "warranty_period", "order_receipt_date"];
 
     // Бежим по данным из даты, вставляем соответствующие значения в таблицу
     for (let item of data) {
         let new_row = table.insertRow(table.rows.length);
 
-        for (let key in item) {
+        for (let key of list_tag) {
 
             // Проверка на наличие гарнатийного периода
             if (key === "warranty_period") {

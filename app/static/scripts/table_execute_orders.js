@@ -1,12 +1,3 @@
-// async function del_element(id){
-//     // Формат отправляемых данных ['id']
-//     post("/api/delete_execution", { id }).then(res =>{
-//         console.log(res);
-//     }).catch(error => {
-//         console.log(error);
-//     })
-// }
-
 function addDataInTable(table_id){
     // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, 
     // order_execution_date, message, date_of_receipt, order_receipt_date]
@@ -14,7 +5,7 @@ function addDataInTable(table_id){
         let table = document.getElementById(table_id);
 
         // Список ожидаемых прилетающих ключей
-        let list_tag = ["id", "client_name", "repair_type",
+        let list_tag = ["order_id", "client_name", "repair_type",
             "repair_cost", "order_execution_date", "message", "date_of_receipt"];
 
          // Бежим по индексам даты и по ключам из list_tag, вставляем соответствующие значения в таблицу
