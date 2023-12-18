@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container pt-3">
     <div class="container mt-5">
@@ -35,4 +39,4 @@
                 window.location = `/report_table?month=${month}&year=${year}`;
             }
         </script>
-    {% endblock %}
+{% endblock %}

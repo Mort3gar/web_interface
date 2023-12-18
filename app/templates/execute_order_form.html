@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>  
 {% endblock %}
 
 {% block content %}
@@ -11,15 +12,21 @@
                     <legend class="mb-3">Исполнить заказ</legend>
                     <div class="mb-3">
                         <label for="order_id" class="form-label">Номер заказа</label>
-                        <input type="number" id="order_id" class="form-control" placeholder="Введите номер заказа:" required>
+                        <select name="choice_select_order" id="order_id">
+                            <!-- Здесь будут данные из БД -->
+                        </select>
                     </div>
+
+                    <!-- <div class="mb-3">
+                        <label for="order_id" class="form-label">Номер заказа</label>
+                        <input type="number" id="order_id" class="form-control" placeholder="Введите номер заказа:" required>
+                    </div> -->
     
                     <div class="mb-3">
                         <label for="executer" class="form-label">Исполнитель</label>
                         <select name="choice_select_executer" id="executer">
                             <!-- Здесь будут данные из БД -->
                         </select>
-                        
                     </div>
 
                     <div class="mb-3">
@@ -60,261 +67,5 @@
 {% endblock %}
 
 {% block scripts_down %}
-        <script type="text/javascript">
-             // Функции для ГЕТА
-            const get = async (url) => {
-                const response = await axios.get(
-                    url
-                );
-                return await response.data
-            };
-
-            function clearInputs() {
-                // Очистить поля ввода
-                document.getElementById("order_id").value = "";
-                document.getElementById("type_repair").value = "";
-                document.getElementById("repair_cost").value = "";
-
-                // Можно попробовать занулить даты
-            }
-
-            // Получаем данные из формы
-            function get_data_from_input(){
-                let order_id = $("#order_id").val();
-                let type_repair = $("#type_repair").val();
-                let repair_cost = $("#repair_cost").val();
-
-                let date_execute = $("#date_execute").val();
-                let receipt_date = $("#receipt_date").val();
-
-                let staff = $("#executer :selected").text();
-
-                let choice = $("#choice_select :selected").text();
-                let message;
-
-                if (choice === "Задача выполнена"){
-                    message = 1;
-                }
-                else{message = 0}
-
-                //console.log(name, brand_name)
-
-                return {"order_id":order_id, "type_repair":type_repair, "repair_cost":repair_cost, "date_execute": date_execute, 
-                "receipt_date":receipt_date, "message":message, "staff":staff }
-            }
-
-            async function addDataInSelect(choice_id){
-                // Формат получаемых данных [id, name, title]
-                await get("/api/get_staff").then(res =>{
-
-                let data = res;
-                let select = document.getElementById(choice_id);
-
-                //console.log(data)
-
-                // добавление в select
-                for (let index_data in data) {
-                    //console.log(data[index_data]["title"])
-                    let opt = document.createElement('option');
-                    // id - id в БД
-                    opt.value = data[index_data]["id"];
-                    opt.innerHTML = data[index_data]["title"] + ": " +  data[index_data]["name"];
-                    select.appendChild(opt);
-                }
-
-                console.log(data)
-
-                }).catch(error =>{
-                    console.log(error)
-                })
-            }
-
-            // Выполнить функцию выше при загрузке страницы
-            window.onload = addDataInSelect("executer");
-
-            // Функции для ПОСТА
-            const post = async (url, dict_) => {
-                const response = await axios.post(
-                    url, dict_
-                );
-                return await response.data
-            }
-
-            async function add_execute_order_in_db(){
-                
-                // Получаем данные из формы
-                let data = get_data_from_input();
-
-                // флаг наличия пустых полей в форме
-                let flag_empty = false;
-
-                // если есть пусты поля(в том числе не выбранные даты) flag_empty=true
-                for (let key in data){
-                    if (data[key] === "") {
-                        flag_empty = true;
-                        break;
-                    }
-                }
-
-                if (!flag_empty) {
-
-                    // формат отправляемых данных ['description']
-                    await post("/api/add_types_of_repairs", {"description": data["type_repair"]}).then(res =>{
-                        console.log(res)
-                    }).catch(error => {
-                        console.log(error)
-                    })
-
-                    // данные таблицы заказов из БД и дата начала заказа нужного
-                    let data_orders;
-                    let date_order_receipt;
-                    // текущий связанный заказ, необходим далее
-                    let current_order;
-
-                    // Формат получаемых данных [id, client_name, product_name, brand, model, warranty_period, order_receipt_date]
-                    await get("/api/get_order").then(res =>{
-                        data_orders = res.reverse();
-                    }).catch(error =>{
-                        console.log(error)
-                    })
-
-                    // Поиск необходимой даты
-                    for (let order_index in data_orders) {
-                        if (data_orders[order_index]["id"] === Number(data["order_id"])) {
-                            date_order_receipt = new Date(data_orders[order_index]["order_receipt_date"]);
-                            current_order = data_orders[order_index]
-                            break;
-                        }
-                    }
-
-                    // вычисление стоимость исполнения услуг
-                    let payment;
-                    let warranty_date = new Date(data["warranty_date"]);
-                    if (warranty_date.getTime() < date_order_receipt.getTime()) { 
-                        payment = data["repair_cost"]
-                    }
-                    else{ payment = 0 }
-
-
-                    // данные таблицы заказов из БД и дата начала заказа нужного
-                    let data_types_of_repairs;
-                    let id_types_of_repair;
-
-                    // Формат получаемых данных [id, desc]
-                    await get("/api/get_types_of_repairs").then(res =>{
-                        data_types_of_repairs = res.reverse();
-                    }).catch(error =>{
-                        console.log(error)
-                    })
-
-                    // Поиск необходимой починки (для id)
-                    for (let type_repair_index in data_types_of_repairs) {
-                        // consol.log(data_types_of_repairs[type_repair_index]["desc"], data["type_repair"])
-                        if (data_types_of_repairs[type_repair_index]["desc"] === data["type_repair"]) {
-                            id_types_of_repair = data_types_of_repairs[type_repair_index]["id"]
-                            break;
-                        }
-                    }
-
-                    // {"order_id":order_id, "type_repair":type_repair, "repair_cost":repair_cost, "date_execute": date_execute, 
-                    // "receipt_date":receipt_date, "message":message}
-                    // формат отправляемых данных (['order_id', 'types_of_repairs_id', 'repair_cost',
-                    // 'order_execution_date' 'message', 'date_of_receipt', 'amount_of_payment']
-                    console.log({"order_id": data["order_id"], "types_of_repairs_id": id_types_of_repair,
-                        "repair_cost": data["repair_cost"], "order_execution_date": data["date_execute"], "message": data["message"], 
-                        "date_of_receipt": data["receipt_date"], "amount_of_payment": payment})
-
-                    await post("/api/add_execution", {"order_id": data["order_id"], "types_of_repairs_id": id_types_of_repair,
-                        "repair_cost": data["repair_cost"], "order_execution_date": data["date_execute"], "message": Boolean(data["message"]), 
-                        "date_of_receipt": data["receipt_date"], "amount_of_payment": payment}).then(res =>{
-                        console.log(res)
-                    }).catch(error => {
-                        console.log(error)
-                    })
-
-                    // "id": res[0],
-                    // "client_name": res[1],
-                    // "warranty_period": str(res[2]),
-                    // "repair_type": res[3],
-                    // "repair_cost": res[4],
-                    // "order_execution_date": str(res[5]),
-                    // "message": res[6],
-                    // "date_of_receipt": str(res[7]),
-                    // "order_receipt_date": str(res[8])
-
-                    // данные таблицы продукт из БД и id нужного
-                    let execute_orders;
-                    let execute_order_id;
-                    
-                    // Формат получаемых данных [id, client_name, warranty_period, repair_type, repair_cost, 
-                    // order_execution_date, message, date_of_receipt, order_receipt_date]
-                    await get("/api/get_execution").then(res =>{
-                        execute_orders = res.reverse();
-                    }).catch(error =>{
-                        console.log(error)
-                    })
-
-                    //     {"order_id":order_id, "type_repair":type_repair, "repair_cost":repair_cost, "date_execute": date_execute, 
-                    // "receipt_date":receipt_date, "message":message}
-
-                    // Поиск id добавленного исполненного заказа
-
-                    // ['order_id', 'types_of_repairs_id', 'repair_cost', 'order_execution_date' 'message', 'date_of_receipt', 'amount_of_payment']
-
-                    for (let execute_order_index in execute_orders) {
-                        if (
-                            execute_orders[execute_order_index]["order_id"] === current_order["id"] &&
-                            execute_orders[execute_order_index]["repair_type"] === data["type_repair"] &&
-                            execute_orders[execute_order_index]["repair_cost"] === data["repair_cost"] &&
-                            execute_orders[execute_order_index]["order_execution_date"] === data["date_execute"] &&
-                            Number(execute_orders[execute_order_index]["message"]) === Number(data["message"]) &&
-                            execute_orders[execute_order_index]["date_of_receipt"] === data["receipt_date"] &&
-                            execute_orders[execute_order_index]["amount_of_payment"] === payment
-                            ) {
-                                execute_order_id = execute_orders[execute_order_index]["id"];
-                                break;
-                        }
-                    }
-
-                    // "id": res[0],
-                    // "name": res[1],
-                    // "title": res[2]
-
-                    // данные таблицы продукт из БД и id нужного
-                    let staffs;
-                    let staff_id;
-                    let post_and_name = data["staff"].split(": ");
-                    // Формат получаемых данных [id, name, title]
-                    await get("/api/get_staff").then(res =>{
-                        staffs = res.reverse();
-                    }).catch(error =>{
-                        console.log(error)
-                    })
-
-                    // Поиск id добавленного исполненного заказа
-                    for (let staff_index in staffs) {
-                        if (
-                            staffs[staff_index]["title"] === post_and_name[0] &&
-                            staffs[staff_index]["name"] === post_and_name[1]
-                            ) {
-                                staff_id = staffs[staff_index]["id"];
-                                break;
-                        }
-                    }
-
-                    console.log({"execution_of_orders_id": execute_order_id, "staff_id": staff_id});
-                    // Формат отправляемых данных ['execution_of_orders_id', 'staff_id']
-                    await post("/api/add_performer", {"execution_of_orders_id": execute_order_id, "staff_id": staff_id}
-                    ).then(res =>{
-                        console.log(res)
-                    }).catch(error => {
-                        console.log(error)
-                    })
-                }
-                else{
-                    console.log("Не все поля заполнены!");
-                }
-            }
-
-        </script>
-    {% endblock %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/execute_order_form.js') }}"></script>
+{% endblock %}

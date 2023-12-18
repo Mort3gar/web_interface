@@ -1,301 +1,75 @@
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
 
-    {% block content %}
-    <div class="container pt-3">
-        <div class="container mt-5">
-            <div class="border border-dark rounded p-3 m-5">
-                <form id="form_order">
-                    <legend class="mb-3">Обработать заказ</legend>
-                    <div class="mb-3">
-                        <label for="product_name" class="form-label">Название продукта</label>
-                        <input type="text" id="product_name" class="form-control" placeholder="Введите название продукта:" required>
-                    </div>
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>  
+{% endblock %}
 
-                    <div class="mb-3">
-                        <label for="choice_brand" class="form-label">Брэнд</label>
-                        <select name="choice_select_brand" id="choice_brand" onclick="GFG_Fun(this.value)">
-                            <!-- Здесь будут данные из БД -->
-                        </select>
-                    </div>
+{% block content %}
+<div class="container pt-3">
+    <div class="container mt-5">
+        <div class="border border-dark rounded p-3 m-5">
+            <form id="form_order">
+                <legend class="mb-3">Обработать заказ</legend>
+                <div class="mb-3">
+                    <label for="product_name" class="form-label">Название продукта</label>
+                    <input type="text" id="product_name" class="form-control" placeholder="Введите название продукта:" required>
+                </div>
 
-                    <div id="hide_div" class="mb-3">
-                        <input type="text" id="brand_name" class="form-control" placeholder="Введите название брэнда:">
-                    </div>
+                <div class="mb-3">
+                    <label for="choice_brand" class="form-label">Брэнд</label>
+                    <select name="choice_select_brand" id="choice_brand" onclick="GFG_Fun(this.value)">
+                        <!-- Здесь будут данные из БД -->
+                    </select>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="model_name" class="form-label">Модель</label>
-                        <input type="text" id="model_name" class="form-control" placeholder="Введите название модели:" required>
-                    </div>
+                <div id="hide_div" class="mb-3">
+                    <input type="text" id="brand_name" class="form-control" placeholder="Введите название брэнда:">
+                </div>
 
-                    <div class="mb-3">
-                        <label for="text_specification" class="form-label">Техническая спецификация</label>
-                        <input type="textarea" id="text_specification" class="form-control" placeholder="Введите техническую спецификацию:" required>
-                    </div>
+                <div class="mb-3">
+                    <label for="model_name" class="form-label">Модель</label>
+                    <input type="text" id="model_name" class="form-control" placeholder="Введите название модели:" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="garantity_period" class="form-label">Гарантийный период</label>
-                        <input type="date" id="garantity_period" class="form-control" placeholder="Введите гарантийный период:" required>
-                    </div>
+                <div class="mb-3">
+                    <label for="text_specification" class="form-label">Техническая спецификация</label>
+                    <input type="textarea" id="text_specification" class="form-control" placeholder="Введите техническую спецификацию:" required>
+                </div>
 
-                    <!-- <div class="mb-3">
-                        <label for="image_loader" class="form-label">Фотография</label>
-                        <input type="file" id="image_loader" class="form-control" placeholder="фотография">
-                    </div> -->
+                <div class="mb-3">
+                    <label for="garantity_period" class="form-label">Гарантийный период</label>
+                    <input type="date" id="garantity_period" class="form-control" placeholder="Введите гарантийный период:" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="client_name" class="form-label">ФИО клиента</label>
-                        <input type="text" id="client_name" class="form-control" placeholder="Введите ФИО:" required>
-                    </div>
+                <!-- <div class="mb-3">
+                    <label for="image_loader" class="form-label">Фотография</label>
+                    <input type="file" id="image_loader" class="form-control" placeholder="фотография">
+                </div> -->
 
-                    <div class="mb-3">
-                        <label for="telephone_number" class="form-label">Номер телефона клиента</label>
-                        <input type="number" id="telephone_number" class="form-control" placeholder="Введите номер:" min="0" required>
-                    </div>
+                <div class="mb-3">
+                    <label for="client_name" class="form-label">ФИО клиента</label>
+                    <input type="text" id="client_name" class="form-control" placeholder="Введите ФИО:" required>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="date_order_acceptance" class="form-label">Дата принятия заказа</label>
-                        <input type="date" id="date_order_acceptance" class="form-control" placeholder="Дата принятия заказа" required>
-                    </div>
+                <div class="mb-3">
+                    <label for="telephone_number" class="form-label">Номер телефона клиента</label>
+                    <input type="number" id="telephone_number" class="form-control" placeholder="Введите номер:" min="0" required>
+                </div>
 
-                    <div>
-                        <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_order_in_db()">
-                    </div>
-                </form>            
-            </div>
+                <div class="mb-3">
+                    <label for="date_order_acceptance" class="form-label">Дата принятия заказа</label>
+                    <input type="date" id="date_order_acceptance" class="form-control" placeholder="Дата принятия заказа" required>
+                </div>
+
+                <div>
+                    <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_order_in_db()">
+                </div>
+            </form>            
         </div>
     </div>
-    {% block scripts_down %}
-    <script type="text/javascript">
-        // Функции для ГЕТА
-            const get = async (url) => {
-                const response = await axios.get(
-                    url
-                );
-                return await response.data
-            };
+</div>
+{% endblock %}
 
-            // Формат получаемых данных [id, name]
-            async function addDataInSelectBrand(choice_id){
-                await get("/api/get_brands").then(res =>{
-
-                let data = res;
-
-                let select = document.getElementById(choice_id);
-                
-                // добавление элементов в select
-                for (let index_data in data) {
-                    let opt = document.createElement('option');
-                    opt.value = data[index_data]["id"];
-                    opt.innerHTML = data[index_data]["name"];
-                    select.appendChild(opt);
-                }
-
-                let opt = document.createElement('option');
-                opt.value = "choice_not_in_list";
-                opt.innerHTML = "Отсутствует в списке";
-                select.appendChild(opt);
-
-              }).catch(error =>{
-                console.log(error)
-              })
-            }
-
-            // Выполнить функцию выше при загрузке страницы
-            window.onload = addDataInSelectBrand("choice_brand");
-
-        // Функции для ПОСТА
-        const post = async (url, dict_) => {
-            const response = await axios.post(
-                url, dict_
-            );
-            return await response.data
-        }
-
-        function clearInputs() {
-        // Очистить поля ввода
-        document.getElementById("product_name").value = "";
-        document.getElementById("brand_name").value = "";
-        document.getElementById("model_name").value = "";
-        document.getElementById("text_specification").value = "";
-        document.getElementById("client_name").value = "";
-        document.getElementById("telephone_number").value = "";
-        }
-
-        // Получаем данные из формы
-        function get_data_from_input(){
-            let product_name = $("#product_name").val();
-            let brand_name;
-            let model_name = $("#model_name").val();
-            let text_specification = $("#text_specification").val();
-            let warranty_date = $("#garantity_period").val();
-            let client_name = $("#client_name").val();
-            let telephone_number = $("#telephone_number").val();
-            let date_order_acceptance = $("#date_order_acceptance").val();
-
-            let choice = $("#choice_brand").val();
-
-            if (choice !== "choice_not_in_list"){
-                brand_name = $("#choice_brand :selected").text();
-            }
-            else{
-                brand_name = $("#brand_name").val();
-            }
-
-            //console.log(name, brand_name)
-
-            return {"product_name": product_name, "brand_name": brand_name, "model_name": model_name, "text_specification": text_specification, 
-            "warranty_date": warranty_date, "client_name": client_name, "telephone_number": telephone_number, "date_order_acceptance": date_order_acceptance}
-        }
-
-        async function add_order_in_db(){
-            // !!!!Функции для ПАТЧА!!!!
-            const patch = async (url, dict_) => {
-            const response = await axios.patch(
-                url, dict_
-            );
-            return await response.data
-        }
-
-            let data = get_data_from_input();
-
-            //console.log(data)
-
-            // флаг наличия пустых полей в форме
-            let flag_empty = false;
-
-            // если есть пусты поля(в том числе не выбранные даты) flag_empty=true
-            for (let key in data){
-                if (data[key] === "") {
-                    flag_empty = true;
-                    break;
-                }
-            }
-
-            if (!flag_empty) {
-
-                const urlSearchParams = new URLSearchParams(window.location.search);
-                const params = Object.fromEntries(urlSearchParams.entries());
-
-                // Формат отправляемых данных [name]
-                await post("/api/add_client", {"name": data["client_name"], "phoneNumber": data["telephone_number"]}).then(res =>{
-                    console.log(res)
-                }).catch(error => {
-                    console.log(error)
-                })
-
-                // Формат отправляемых данных [brand_name]
-                await post("/api/add_brand", {"brand_name": data["brand_name"]}).then(res =>{
-                    console.log(res)
-                }).catch(error => {
-                    console.log(error)
-                })
-
-                // данные таблицы брэнды из БД и id нужного
-                let data_brands;
-                let brand_id;
-
-                // Формат получаемых данных [id, name]
-                await get("/api/get_brands").then(res =>{
-                    data_brands = res.reverse();
-                }).catch(error =>{
-                    console.log(error)
-                })
-
-                for (let brand_index in data_brands) {
-                    if (data_brands[brand_index]["name"] === data["brand_name"]) {
-                        brand_id = data_brands[brand_index]["id"];
-                        break;
-                    }
-                }
-
-                // данные таблицы продукт из БД и id нужного
-                let products;
-                let product_id;
-                
-                // Формат получаемых данных [id, name, brand_name, model, technical_specifications, warranty_period]
-                await get("/api/get_product").then(res =>{
-                    products = res.reverse();
-                }).catch(error =>{
-                    console.log(error)
-                })
-
-
-                function findIndex(products, data) {
-                    for (let product of products) {
-                        console.log(product, data)
-                        if (
-                            product["name"] === data["product_name"] && 
-                            product["brand_name"] === data["brand_name"] &&
-                            product["model"] === data["model_name"] &&
-                            product["technical_specifications"] === data["text_specification"] &&
-                            product["warranty_period"] === data["warranty_date"]
-                            ) {
-                                product_id = product["id"];
-                                break;
-                        }
-                    }
-                }
-                
-                // Поиск id добавленного продукта
-                for (let product_index in products) {
-                    console.log(products[product_index], data)
-                    if (
-                        products[product_index]["name"] === data["product_name"] && 
-                        products[product_index]["brand_name"] === data["brand_name"] &&
-                        products[product_index]["model"] === data["model_name"] &&
-                        products[product_index]["technical_specifications"] === data["text_specification"] &&
-                        products[product_index]["warranty_period"] === data["warranty_date"]
-                        ) {
-                            product_id = products[product_index]["id"];
-                            break;
-                    }
-                }
-                // console.log(current_order);
-                // Формат отправляемых данных ['id', 'name', 'brands_id', 'model', 'technical_specification', 'warranty_period']
-                await patch("/api/edit_product", {"id": product_id,"name": data["product_name"], "brands_id": brand_id, "model":data["model_name"],
-                    "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]}
-                ).then(res =>{
-                    console.log(res)
-                }).catch(error => {
-                    console.log(error)
-                })
-
-                // данные таблицы продукт из БД и id нужного
-                let clients;
-                let client_id;
-                
-                // Формат получаемых данных [id, name]
-                await get("/api/get_client").then(res =>{
-                    clients = res.reverse();
-                }).catch(error =>{
-                    console.log(error)
-                })
-
-                // Поиск id добавленного продукта
-                for (let client_index in clients) {
-                    if (clients[client_index]["name"] === data["client_name"]) {
-                        client_id = clients[client_index]["id"];
-                        break;
-                    }
-                }
-
-                console.log({"clients_id": client_id, "product_id": product_id,
-                    "order_receipt_date": data["date_order_acceptance"]})
-
-                // Формат отправляемых данных ['clients_id', 'product_id', 'order_receipt_date']
-                await patch("/api/edit_order", {"clients_id": client_id, "product_id": product_id,
-                    "order_receipt_date": data["date_order_acceptance"]}).then(res =>{
-                    console.log(res)
-                }).catch(error => {
-                    console.log(error)
-                })
-            }
-            else{
-                // info
-                console.log("Не все поля заполнены!");
-            }
-        }
-
-        </script>
-    {% endblock %}
-    {% endblock %}
+{% block scripts_down %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/edit_data_order_table.js') }}"></script>
+{% endblock %}

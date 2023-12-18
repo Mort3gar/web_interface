@@ -1,249 +1,67 @@
-    {% extends 'base.html' %}
-    {% block scripts %}
+{% extends 'base.html' %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>  
 {% endblock %}
-    {% block content %}
-    <div class="container pt-3">
-        <div class="container mt-5">
-            <div class="border border-dark rounded p-3 m-5">
-                <form id="form_execute_order">
-                    <legend class="mb-3"></legend>
-                    <div class="mb-3">
-                        <label for="order_id" class="form-label">Номер заказа</label>
-                        <input type="number" id="order_id" class="form-control" placeholder="Введите номер заказа:" required>
-                    </div>
-    
-                    <div class="mb-3">
-                        <label for="executer" class="form-label">Исполнитель</label>
-                        <select name="choice_select_executer" id="executer">
-                            <!-- Здесь будут данные из БД -->
-                        </select>
-                        
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="type_repair" class="form-label">Тип ремонта</label>
-                        <input type="text" id="type_repair" class="form-control" placeholder="Введите тип ремонта:" required>
-                    </div>
-    
-                    <div class="mb-3">
-                        <label for="repair_cost" class="form-label">Стоимость ремонта</label>
-                        <input type="number" id="repair_cost" class="form-control" placeholder="Введите стоимость ремонта:" min="0" required>
-                    </div>
-    
-                    <div class="mb-3">
-                        <label for="date_execute" class="form-label">Дата исполнения заказа</label>
-                        <input type="date" id="date_execute" class="form-control" placeholder="дата исполнения" required>
-                    </div>
-    
-                    <div class="mb-3">
-                        <label for="choice_select" class="form-label">Сообщение о проделанной работе</label>
-                        <select name="choice_message" id="choice_select">
-                            <option value="choice_yes">Задача выполнена</option>
-                            <option value="choice_no">Задача не выполнена</option>
-                        </select>
-                    </div>
-    
-                    <div class="mb-3">
-                        <label for="receipt_date" class="form-label">Дата получения товара</label>
-                        <input type="date" id="receipt_date" class="form-control" placeholder="дата получения товара">
-                    </div>
+{% block content %}
+<div class="container pt-3">
+    <div class="container mt-5">
+        <div class="border border-dark rounded p-3 m-5">
+            <form id="form_execute_order">
+                <legend class="mb-3"></legend>
+                <div class="mb-3">
+                    <label for="order_id" class="form-label">Номер заказа</label>
+                    <select name="choice_select_order" id="order_id">
+                        <!-- Здесь будут данные из БД -->
+                    </select>
+                </div>
 
-                    <div>
-                        <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_execute_order_in_db()">
-                    </div>
-                </form>            
-            </div>
+                <div class="mb-3">
+                    <label for="executer" class="form-label">Исполнитель</label>
+                    <select name="choice_select_executer" id="executer">
+                        <!-- Здесь будут данные из БД -->
+                    </select>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <label for="type_repair" class="form-label">Тип ремонта</label>
+                    <input type="text" id="type_repair" class="form-control" placeholder="Введите тип ремонта:" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="repair_cost" class="form-label">Стоимость ремонта</label>
+                    <input type="number" id="repair_cost" class="form-control" placeholder="Введите стоимость ремонта:" min="0" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date_execute" class="form-label">Дата исполнения заказа</label>
+                    <input type="date" id="date_execute" class="form-control" placeholder="дата исполнения" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="choice_select" class="form-label">Сообщение о проделанной работе</label>
+                    <select name="choice_message" id="choice_select">
+                        <option value="choice_yes">Задача выполнена</option>
+                        <option value="choice_no">Задача не выполнена</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="receipt_date" class="form-label">Дата получения товара</label>
+                    <input type="date" id="receipt_date" class="form-control" placeholder="дата получения товара">
+                </div>
+
+                <div>
+                    <input type="button" value="Сохранить" class="btn btn-dark" onclick="add_execute_order_in_db()">
+                </div>
+            </form>            
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block scripts_down %}
-    <script type="text/javascript">
-        // Функции для ГЕТА
-       const get = async (url) => {
-           const response = await axios.get(
-               url
-           );
-           return await response.data
-       };
-
-       const patch = async(url, dic_) => {
-            return (await axios.patch(url, dic_)).data
-       } 
-       
-       function set_data_in_form(data){
-            document.getElementById("order_id").value = data["order_id"];
-            document.getElementById("type_repair").value = data["type_repair"];
-            document.getElementById("repair_cost").value = data["repair_cost"];
-            document.getElementById("date_execute").value = data["date_execute"];
-            document.getElementById("choice_message").selectedIndex = data["choice_message"]
-            document.getElementById("receipt_date").value = data["receipt_date"];
-
-        }
-
-
-       function clearInputs() {
-           // Очистить поля ввода
-           document.getElementById("order_id").value = "";
-           document.getElementById("type_repair").value = "";
-           document.getElementById("repair_cost").value = "";
-
-           // Можно попробовать занулить даты
-       }
-
-       // Получаем данные из формы
-       function get_data_from_input(){
-           let order_id = $("#order_id").val();
-           let type_repair = $("#type_repair").val();
-           let repair_cost = $("#repair_cost").val();
-
-           let date_execute = $("#date_execute").val();
-           let receipt_date = $("#receipt_date").val();
-
-           let staff = $("#executer :selected").text();
-
-           let choice = $("#choice_select :selected").text();
-           let message;
-
-           if (choice === "Задача выполнена"){
-               message = 1;
-           }
-           else{message = 0}
-
-           //console.log(name, brand_name)
-
-           return {"order_id":order_id, "type_repair":type_repair, "repair_cost":repair_cost, "date_execute": date_execute, 
-           "receipt_date":receipt_date, "message":message, "staff":staff }
-       }
-
-       async function addDataInSelect(choice_id){
-            // Формат получаемых данных [id, name, title]
-            await get("/api/get_staff").then(res =>{
-
-            let data = res;
-            let select = document.getElementById(choice_id);
-
-            //console.log(data)
-
-            console.log(choice_id)
-            // добавление в select
-            for (let index_data in data) {
-                //console.log(data[index_data]["title"])
-                let opt = document.createElement('option');
-                // id - id в БД
-                opt.value = data[index_data]["id"];
-                opt.innerHTML = data[index_data]["title"] + ": " +  data[index_data]["name"];
-                select.appendChild(opt);
-            }
-
-            console.log(data)
-
-            }).catch(error =>{
-                console.log(error)
-            })
-
-            const urlSearchParams = new URLSearchParams(window.location.search);
-            const params = Object.fromEntries(urlSearchParams.entries());
-            
-            let execution;
-            await get(`/api/get_execution?id=${params.id}`).then(res => {
-                    execution = res
-                }
-            ).catch(error => {
-                console.log(error)
-            })
-            console.log(execution)
-            elem = document.getElementById("order_id")
-            elem.value = execution['order_id']
-            elem = document.getElementById("type_repair")
-            elem.value = execution['repair_type']
-            elem = document.getElementById("repair_cost")
-            elem.value = execution['repair_cost']
-            elem = document.getElementById("date_execute")
-            elem.value = execution['order_execution_date']
-            elem = document.getElementById("receipt_date")
-            elem.value = execution['order_receipt_date']
-
-            elem = document.getElementById("choice_select")
-
-            if (execution['message'] == 1){elem.selectedIndex = 0}
-            else {elem.selectedIndex = 1}
-
-            let performer;
-            await get(`/api/get_performer_by_execution?id=${params.id}`).then(res => {
-                performer = res['staff_id']
-            }).catch(error =>{
-                console.log(error)
-            })
-            await get(`/api/get_staff?id=${performer}`).then(res =>{
-                console.log(res)
-                elem = document.getElementById("executer")
-                elem.selectedIndex = res['id']-1
-            }).catch(error => {
-                console.log(error)
-            })
-       }
-
-       // Выполнить функцию выше при загрузке страницы
-       window.onload = addDataInSelect("executer");
-
-       // Функции для ПОСТА
-       const post = async (url, dict_) => {
-           const response = await axios.post(
-               url, dict_
-           );
-           return await response.data
-       }
-
-       async function add_execute_order_in_db(){
-           
-           // Получаем данные из формы
-           let data = get_data_from_input();
-
-           // флаг наличия пустых полей в форме
-           let flag_empty = false;
-
-           // если есть пусты поля(в том числе не выбранные даты) flag_empty=true
-           for (let key in data){
-               if (data[key] === "") {
-                   flag_empty = true;
-                   break;
-               }
-           }
-
-            if (!flag_empty) {
-                let error = false;
-               // формат отправляемых данных ['description']
-               await post("/api/add_types_of_repairs", {"description": data["type_repair"]}).then(res =>{
-                   console.log(res)
-               }).catch(error_ => {
-                   error = true
-               })
-               let type_id;
-                await get(`/api/get_type_by_desc?description=${(document.getElementById("type_repair")).value}`).then(res => {
-                    type_id = res['id']
-                    console.log(res)
-                }).catch(err => {console.log(err)})
-
-                const urlSearchParams = new URLSearchParams(window.location.search);
-                const params = Object.fromEntries(urlSearchParams.entries());
-                let message;
-                if ((document.getElementById("choice_select")).value === "choise_yes"){message = 1}
-                else{message = 0} 
-                await patch("/api/edit_execution",{
-                    "id": params.id,
-                    "order_id": (document.getElementById("order_id")).value,
-                    "types_of_repairs_id": type_id,
-                    "repair_cost": (document.getElementById("repair_cost")).value,
-                    "order_execution_date": (document.getElementById("date_execute")).value,
-                    "message": 0,
-                    "date_of_receipt": (document.getElementById("receipt_date")).value
-                }).then(res => {console.log(res)}).catch(error => {console.log(error)})
-            }
-            else{
-                console.log("Не все поля заполнены!");
-            }
-       }
-
-    </script>
-    {% endblock %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/edit_execute_data.js') }}"></script>
+{% endblock %}

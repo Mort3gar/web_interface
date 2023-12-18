@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="container mt-5">
         <table class="table table-striped table-hover" id="table_orders">
@@ -22,6 +26,5 @@
 {% endblock %}
 
 {% block scripts_down %}
-    <script type="text/javascript" src="{{ url_for('static', filename='scripts/util.js') }}"></script>  
     <script type="text/javascript" src="{{ url_for('static', filename='scripts/table_stuff.js') }}"></script>
 {% endblock %}
