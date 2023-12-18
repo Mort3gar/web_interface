@@ -5,6 +5,15 @@
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.8.1/dist/jspdf.plugin.autotable.min.js"></script> -->
+
+    <script src='https://cdn.jsdelivr.net/npm/pdfmake@latest/build/pdfmake.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/pdfmake@latest/build/vfs_fonts.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-pdfmake/browser.js"></script>
+
+
     <style>
         table, 
         td,
@@ -15,13 +24,12 @@
     </style>
 </head>
 <body>
-    <div>
-        <div>
-            <h3 id="table_title" style="text-align: center;">
-                Сведения об исполненных заказах по гарантийному ремонту бытовой техники<br>
-                За такой-то месяц такого-то года
-            </h3>
-        </div>
+    <button style="margin: auto;", onclick="createPdf()">Создать PDF</button>
+    <div id="table_div">
+        <h3 id="table_title" style="text-align: center;">
+            Сведения об исполненных заказах по гарантийному ремонту бытовой техники<br>
+            За такой-то месяц такого-то года
+        </h3>
         
         <table id="table_report" style="margin: auto;border: 0px;" cellspacing = "0">
             <caption>Записи</caption>
@@ -59,16 +67,9 @@
             return await response.data
         }
 
-        async function del_element(param){
-            // Формат отправляемых данных ['id']
-            await post("/api/delete_order", {"id": param}).then(res =>{
-                    console.log(res)
-                }).catch(error => {
-                    console.log(error)
-                })
-        }
     async function addDataInTable(table_id){
         data = new Proxy(new URLSearchParams(window.location.search), {get: (searchParams, prop) => searchParams.get(prop),});
+        (document.getElementById("table_title")).innerHTML = `Сведения об исполненных заказах по гарантийному ремонту бытовой техники<br>За ${data.month} месяц ${data.year} года`
         await get(`/api/get_report?month=${data.month}&year=${data.year}`).then(res =>{
 
         let data = res
@@ -85,8 +86,8 @@
         let coun = 0;
         for (let item in data){
             item = Number(item)
-            let date_1 = new Date(data[i]["order_execution_date"])
-            let date_2 = new Date(data[i]["order_receipt_date"])
+            let date_1 = new Date(data[item]["order_execution_date"])
+            let date_2 = new Date(data[item]["order_receipt_date"])
             let date = date_1 - date_2
 
             table.insertRow(table.rows.length).innerHTML = `
@@ -131,44 +132,28 @@
                 coun = 0;
             }
         }
-    //     for (let one_data in data) {
-    //     // счетчик строк
-        
-    //     let date_1 = new Date(data[one_data]["order_execution_date"])
-    //     let date_2 = new Date(data[one_data]["order_receipt_date"])
-    //     let date = date_1 - date_2
-    //     console.log(date_1, date_2, date)
-
-    //     table.insertRow(table.rows.length).innerHTML = `
-    //     <td>${data[one_data]["id"]}</td>
-    //     <td>${data[one_data]["client_name"]}</td>
-    //     <td>${data[one_data]["phoneNumber"]}</td>
-    //     <td>${data[one_data]["order_receipt_date"]}</td>
-    //     <td>${data[one_data]["order_execution_date"]}</td>
-    //     <td>${date/86400000}</td>
-    //     `
-
-    //     table.insertRow(table.rows.length).innerHTML=`
-    //         <td colspan="6" ><b>Наименование товара:</b> ${data[one_data]["product_name"]}</td>
-    //     `
-
-    //     table.insertRow(table.rows.length).innerHTML=`
-    //         <td colspan="6"><b>Фирма:</b> ${data[one_data]["brand_name"]}</td>
-    //     `
-
-    //     table.insertRow(table.rows.length).innerHTML=`
-    //         <td colspan="6"><b>Модель:</b> ${data[one_data]["model"]}</td>
-    //     `
-
-    //     // table.insertRow(table.rows.length).innerHTML=`
-    //     //     <td colspan="6"></td>
-    //     // `
-    // }
     }).catch(error =>{
         console.log(error)
     })
     }
     // Отработка функции при загрузке окна
     window.onload = addDataInTable("table_report");
+
+    // console.log((document.getElementById("table_div")).innerHTML)
+    // let html_ = htmlToPdfmake(`${(document.getElementById("table_div")).innerHTML}`, {window:window, tableAutoSize:true})
+    // console.log(html_)
+    // let dd = {
+    //     content: html_.content
+    // }
+    // pdfMake.createPdf(dd).download();
+    function createPdf(){
+        data = new Proxy(new URLSearchParams(window.location.search), {get: (searchParams, prop) => searchParams.get(prop),});
+        var val = htmlToPdfmake(`<h3 id="table_title" style="text-align: center;">Сведения об исполненных заказах по гарантийному ремонту бытовой техники</h3>`);
+        let html_ = htmlToPdfmake(`${(document.getElementById("table_div")).innerHTML}`, {window:window, tableAutoSize:true})
+        console.log(html_)
+        console.log(val)
+        var dd = {content:html_};
+        pdfMake.createPdf(dd).download(`Отчёт за ${data.month} месяц ${data.year} года`);
+    }
 </script>
 </html>
