@@ -77,6 +77,7 @@ def edit_order():
             if len(dbHandler.execute(f"select * from orders where id = {data['id']}")) != 0:
                 dbHandler.update("orders", ['clients_id', 'product_id', 'order_receipt_date'],
                                  [data['clients_id'], data['product_id'], data['order_receipt_date']], data['id'])
+                return json.dumps({"success": "True"}), 200, {'Content-Type': 'application/json'}
             else:
                 return abort(409, OrdersAPIErrors.idErr)
         except ValueError as e:
