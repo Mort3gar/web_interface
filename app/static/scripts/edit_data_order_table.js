@@ -27,15 +27,23 @@ async function set_data_in_form(choice_id, input_values, keys_from_db) {
 
     // Формат получаемых данных [id, name, phoneNumber]
     await get("/api/get_client").then(res => {
-        let clients = res.reverse();
-        data_values["phoneNumber"] = compare(current_order, clients, ["client_name"], ["name"], ["id"])[0];
+        let clients = res;
+        data_values["phoneNumber"] = compare(current_order, clients, ["client_name"], ["name"], ["phoneNumber"])[0];
     }).catch(error => {
         console.log(error)
     })
 
+    console.log(data_values)
+
     addDataInSelect("/api/get_brands", choice_id);
 
-    SetInputs(input_values["input"], true, data_values);
+    // let data_values_by_need_keys = {};
+
+    // for (let key of keys_from_db) {
+    //     data_values_by_need_keys[key] = data_values[key]
+    // }
+
+    SetInputs(input_values["input"], true, data_values, keys_from_db);
 
     // Формат получаемых данных [id, name]
     await get("/api/get_brands").then(data => {
@@ -46,7 +54,7 @@ async function set_data_in_form(choice_id, input_values, keys_from_db) {
         for (let index_data in data) {
 
             // Айдишник нужного поста для селекта
-            if (current_staff["name"] === data[index_data]["name"]) {
+            if (current_order["brand"] === data[index_data]["name"]) {
                 index_counter = index_data;
             }
         }
@@ -65,8 +73,8 @@ async function set_data_in_form(choice_id, input_values, keys_from_db) {
 set_data_in_form("choice_brand", {
     "select": ["choice_brand"], "input": ["product_name", "model_name", "text_specification",
         "garantity_period", "client_name", "telephone_number", "date_order_acceptance"]
-}, ["product_name", "model_name",
-    "text_specification", "warranty_period", "client_name", "phoneNumber", "order_receipt_date"])
+}, ["product_name", "model",
+    "technical_specifications", "warranty_period", "client_name", "phoneNumber", "order_receipt_date"])
 
 async function add_order_in_db() {
 
@@ -83,133 +91,43 @@ async function add_order_in_db() {
         }
     });
 
-    if (!check_fields(data)) {
+    console.log(data)
 
+    if (!check_fields(data)) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
+        let data_for_post = {"id": params['id']};
 
-        // Формат отправляемых данных [name]
-        await post("/api/add_client", {
-            "name": data["client_name"],
-            "phoneNumber": data["telephone_number"]
-        }).then(res => {
-            console.log(res)
-        }).catch(error => {
-            console.log(error)
-        })
-
-        // Формат отправляемых данных [brand_name]
-        await post("/api/add_brand", {"brand_name": data["brand_name"]}).then(res => {
-            console.log(res)
-        }).catch(error => {
-            console.log(error)
-        })
-
-        // данные таблицы брэнды из БД и id нужного
-        let data_brands;
-        let brand_id;
-
-        // Формат получаемых данных [id, name]
-        await get("/api/get_brands").then(res => {
-            data_brands = res.reverse();
-        }).catch(error => {
-            console.log(error)
-        })
-
-        for (let brand_index in data_brands) {
-            if (data_brands[brand_index]["name"] === data["brand_name"]) {
-                brand_id = data_brands[brand_index]["id"];
-                break;
-            }
-        }
-
-        // данные таблицы продукт из БД и id нужного
-        let products;
-        let product_id;
-
-        // Формат получаемых данных [id, name, brand_name, model, technical_specifications, warranty_period]
-        await get("/api/get_product").then(res => {
-            products = res.reverse();
-        }).catch(error => {
-            console.log(error)
-        })
-
-
-        function findIndex(products, data) {
-            for (let product of products) {
-                console.log(product, data)
-                if (
-                    product["name"] === data["product_name"] &&
-                    product["brand_name"] === data["brand_name"] &&
-                    product["model"] === data["model_name"] &&
-                    product["technical_specifications"] === data["text_specification"] &&
-                    product["warranty_period"] === data["warranty_date"]
-                ) {
-                    product_id = product["id"];
+        await get("/api/get_client").then(data_clients => {
+            for (client of data_clients) {
+                if (data["client_name"] === client["name"] && data["telephone_number"] === client["phoneNumber"]) {
+                    data_for_post["clients_id"] = client["id"];
                     break;
-                }
+                }   
             }
-        }
-
-        // Поиск id добавленного продукта
-        for (let product_index in products) {
-            console.log(products[product_index], data)
-            if (
-                products[product_index]["name"] === data["product_name"] &&
-                products[product_index]["brand_name"] === data["brand_name"] &&
-                products[product_index]["model"] === data["model_name"] &&
-                products[product_index]["technical_specifications"] === data["text_specification"] &&
-                products[product_index]["warranty_period"] === data["warranty_date"]
-            ) {
-                product_id = products[product_index]["id"];
-                break;
-            }
-        }
-        // console.log(current_order);
-        // Формат отправляемых данных ['id', 'name', 'brands_id', 'model', 'technical_specification', 'warranty_period']
-        await patch("/api/edit_product", {
-                "id": product_id, "name": data["product_name"], "brands_id": brand_id, "model": data["model_name"],
-                "technical_specification": data["text_specification"], "warranty_period": data["warranty_date"]
-            }
-        ).then(res => {
-            console.log(res)
         }).catch(error => {
-            console.log(error)
+            console.log(error);
         })
 
-        // данные таблицы продукт из БД и id нужного
-        let clients;
-        let client_id;
-
-        // Формат получаемых данных [id, name]
-        await get("/api/get_client").then(res => {
-            clients = res.reverse();
+        await get(`/api/get_order?id=${params['id']}`).then(data_order => {
+            data_for_post["product_id"] = data_order["product_id"];
         }).catch(error => {
-            console.log(error)
+            console.log(error);
         })
 
-        // Поиск id добавленного продукта
-        for (let client_index in clients) {
-            if (clients[client_index]["name"] === data["client_name"]) {
-                client_id = clients[client_index]["id"];
-                break;
-            }
-        }
+        data_for_post["order_receipt_date"] = data["date_order_acceptance"];
 
-        console.log({
-            "clients_id": client_id, "product_id": product_id,
-            "order_receipt_date": data["date_order_acceptance"]
-        })
-
-        // Формат отправляемых данных ['clients_id', 'product_id', 'order_receipt_date']
         await patch("/api/edit_order", {
-            "clients_id": client_id, "product_id": product_id,
-            "order_receipt_date": data["date_order_acceptance"]
+            "id": data_for_post["id"],
+            "clients_id": data_for_post["clients_id"],
+            "product_id": data_for_post["product_id"],
+            "order_receipt_date": data_for_post["order_receipt_date"]
         }).then(res => {
             console.log(res)
         }).catch(error => {
             console.log(error)
         })
+        
     } else {
         // info
         console.log("Не все поля заполнены!");

@@ -139,6 +139,10 @@ async function add_execute_order_in_db() {
     }
 }
 
-addDataInSelect("/api/get_staff", "executer", false, true, false, ["id", "title", "name"]);
+window.onload = addDataInSelect("/api/get_staff", "executer", false, true, false, ["id", "title", "name"]);
 
-addDataInSelect("/api/get_order", "order_id", false, true, true, ["id", "id"]);
+// setTimeout(() => {  console.log("World!"); }, 2000);
+// setTimeout(() => {  console.log("World!"); }, 2000);
+// setTimeout(() => {  console.log("World!"); }, 2000);
+
+window.onload = addDataInSelect("/api/get_order", "order_id", false, true, true, ["id", "id"]);

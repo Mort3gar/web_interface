@@ -21,7 +21,7 @@ async function set_data_in_form(choice_id, input_values, keys_from_db) {
         data_values[key] = current_staff[key]
     }
 
-    SetInputs(input_values["input"], true, data_values);
+    SetInputs(input_values["input"], true, data_values, keys_from_db);
 
     // Формат получаемых данных [id, title]
     await get("/api/get_post").then(data => {

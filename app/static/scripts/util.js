@@ -30,14 +30,10 @@ function GFG_Fun(value) {
     }
 }
 
-function SetInputs(data_keys, set_many_data = false, value = "") {
+function SetInputs(data_keys, set_many_data = false, value = "", value_keys=[]) { 
     if (set_many_data) {
-        for (key of data_keys) {
-            // Очистить поля ввода
-            for (key_value in value) {
-                // Очистить поля ввода
-                document.getElementById(key).value = value[key_value];
-            }
+        for (let index in data_keys) {
+            document.getElementById(data_keys[index]).value = value[value_keys[index]];
         }
     } else {
         for (key of data_keys) {
